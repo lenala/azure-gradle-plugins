@@ -1,0 +1,18 @@
+plugins {
+    id "com.microsoft.azure.azurewebapp"
+}
+
+def dockerImagePrefix = "elenaregistry.azurecr.io"
+def projectArtifactId = "dockerProject"
+version = "1.0-SNAPSHOT"
+
+deploy {
+    resourceGroup = "myResourceGroup"
+    appName = "mynewwebapp"
+    pricingTier = "S1"
+    containerSettings = {
+        imageName = dockerImagePrefix + "/" + projectArtifactId + ":" + version
+        registryUrl = "https://" + dockerImagePrefix
+        serverId = dockerImagePrefix
+    }
+}

@@ -1,0 +1,12 @@
+plugins {
+    id "com.microsoft.azure.azurewebapp"
+}
+
+deploy {
+    resourceGroup = "rg238910"
+    appName = "mynewwebapplena8"
+    javaVersion = "1.8.0_102"
+    pricingTier = "S2"
+    javaWebContainer = "tomcat 7.0"
+    target = "./testProjects/simpleProject/target/webProject.war"
+}
