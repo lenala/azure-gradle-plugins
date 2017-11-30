@@ -1,0 +1,95 @@
+buildscript {
+    ext {
+        springBootVersion     = "1.5.2.RELEASE"
+        gradleDockerVersion   = "1.2"
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url uri('C:/Users/elenla.REDMOND/.m2/repository')
+        }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath group: 'com.microsoft.azure', name: 'azure-webapp-gradle-plugin',
+                version: '1.0-SNAPSHOT'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.1'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: "org.springframework.boot"
+apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'com.microsoft.azure.azurewebapp'
+
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.microsoft.azure.gradle.webapp.DeployTask
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.8.RELEASE'
+    compile group: 'com.microsoft.azure', name: 'azure-documentdb-spring-boot-starter', version:'0.2.0'
+}
+
+group = 'elenaregistry.azurecr.io'
+version = 'v0.15'
+def dockerImagePrefix = 'elenaregistry.azurecr.io'
+def projectArtifactId = "myimage"
+
+description = "todo-app-java-on-azure"
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+jar {
+    baseName = "todo-app-java-on-azure"
+    manifest { attributes "Main-Class": "com.microsoft.azure.sample.TodoApplication" }
+}
+
+task createDockerfile(type: Dockerfile) {
+    dependsOn build
+    destFile = project.file('./build/Dockerfile')
+    from 'java'
+    volume '/tmp'
+    addFile('libs/*.jar','/app.jar')
+    entryPoint "java", "-jar", "/app.jar", "--server.port=80"
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn createDockerfile
+    noCache = false
+    remove = true
+    inputDir file('./build')   //createDockerfile.destFile.parentFile + "/lib"
+    tag 'elenaregistry.azurecr.io/myimage:' + version
+}
+
+task dockerPushImage(type: DockerPushImage) {
+    dependsOn buildImage
+    imageName 'elenaregistry.azurecr.io/myimage:' + version
+}
+
+docker {
+    registryCredentials {
+        url = 'http://elenaregistry.azurecr.io/'
+        username = 'elenaregistry'
+        password = '<password>'
+        email = 'lena.lakhno@gmail.com'
+    }
+}
+
+deploy {
+    resourceGroup = "rg5"
+    appName = "mynewwebapplena15"
+    pricingTier = "S2"
+    containerSettings = {
+        imageName = dockerImagePrefix + "/" + projectArtifactId + ":" + version
+        registryUrl = "https://" + dockerImagePrefix
+        serverId = dockerImagePrefix
+    }
+}
+
+repositories {
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
