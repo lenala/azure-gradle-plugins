@@ -155,7 +155,7 @@ public class AzureAuthHelper {
 //
 //        final Authenticated auth = azureConfigure().authenticate(credential);
 //        if (auth != null) {
-//            logger.info(AUTH_WITH_SERVER_ID + serverId);
+//            logger.quiet(AUTH_WITH_SERVER_ID + serverId);
 //        }
 //        return auth;
     }
@@ -180,7 +180,7 @@ public class AzureAuthHelper {
         try {
             final Authenticated auth = azureConfigure().authenticate(authFile);
             if (auth != null) {
-                logger.info(AUTH_WITH_FILE + authFile.getAbsolutePath());
+                logger.quiet(AUTH_WITH_FILE + authFile.getAbsolutePath());
             }
             return auth;
         } catch (Exception e) {
@@ -198,7 +198,7 @@ public class AzureAuthHelper {
         try {
             final Authenticated auth = azureConfigure().authenticate(AzureCliCredentials.create());
             if (auth != null) {
-                logger.info(AUTH_WITH_AZURE_CLI);
+                logger.quiet(AUTH_WITH_AZURE_CLI);
             }
             return auth;
         } catch (Exception e) {

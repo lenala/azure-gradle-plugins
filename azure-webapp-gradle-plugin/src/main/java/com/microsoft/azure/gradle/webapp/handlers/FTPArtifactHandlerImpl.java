@@ -84,7 +84,7 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
         String stageDirectory = Paths.get(getBuildDirectoryAbsolutePath(),
                 "azure-webapps",
                 azureWebAppExtension.getAppName()).toString();
-        logger.info(stageDirectory);
+        logger.quiet(stageDirectory);
         return stageDirectory;
     }
 

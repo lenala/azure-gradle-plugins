@@ -17,6 +17,6 @@ In `application.properties`, update CosmosDB credentials.
 
 To deploy app to Azure, run
 ```cmd
-gradle pushDockerImage
+gradle dockerPushImage
 gradle deploy
 ```

@@ -49,10 +49,10 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     @TaskAction
     void deploy() {
         try {
-            getLogger().info(String.format(WEBAPP_DEPLOY_START, azureWebAppExtension.getAppName()));
+            getLogger().quiet(String.format(WEBAPP_DEPLOY_START, azureWebAppExtension.getAppName()));
             createOrUpdateWebApp();
             deployArtifacts();
-            getLogger().info(String.format(WEBAPP_DEPLOY_SUCCESS, azureWebAppExtension.getAppName()));
+            getLogger().quiet(String.format(WEBAPP_DEPLOY_SUCCESS, azureWebAppExtension.getAppName()));
         } catch (Exception ex) {
             throw new TaskExecutionException(this, ex);
         }
@@ -79,33 +79,33 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     }
 
     private void createWebApp() throws Exception {
-        getLogger().info(WEBAPP_NOT_EXIST);
-        getLogger().info(getFactory().getRuntimeHandler(this).getClass().getName());
+        getLogger().quiet(WEBAPP_NOT_EXIST);
+        getLogger().quiet(getFactory().getRuntimeHandler(this).getClass().getName());
         final WebApp.DefinitionStages.WithCreate withCreate = getFactory().getRuntimeHandler(this).defineAppWithRuntime();
         getFactory().getSettingsHandler(getProject()).processSettings(withCreate);
         withCreate.create();
 
-        getLogger().info(WEBAPP_CREATED);
+        getLogger().quiet(WEBAPP_CREATED);
     }
 
     private void updateWebApp(final WebApp app) throws Exception {
-        getLogger().info(UPDATE_WEBAPP);
+        getLogger().quiet(UPDATE_WEBAPP);
 
         final WebApp.Update update = getFactory().getRuntimeHandler(this).updateAppRuntime(app);
         getFactory().getSettingsHandler(getProject()).processSettings(update);
         update.apply();
 
-        getLogger().info(UPDATE_WEBAPP_DONE);
+        getLogger().quiet(UPDATE_WEBAPP_DONE);
     }
 
     private void deployArtifacts() throws Exception {
-        getLogger().info("Deploying artifacts");
+        getLogger().quiet("Deploying artifacts");
         //getResources();
         /*if (resources == null || resources.isEmpty()) {
             getLog().info(NO_RESOURCES_CONFIG);
         } else */
         if (azureWebAppExtension.containerSettings != null) {
-            getLogger().info("Nothing to upload to FTP");
+            getLogger().quiet("Nothing to upload to FTP");
         } else {
             try {
                 util.beforeDeployArtifacts();
@@ -168,23 +168,23 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
 
         public void beforeDeployArtifacts() throws Exception {
             if (azureWebAppExtension.isStopAppDuringDeployment()) {
-                getLogger().info(STOP_APP);
+                getLogger().quiet(STOP_APP);
 
                 getWebApp().stop();
                 isAppStopped = true;
 
-                getLogger().info(STOP_APP_DONE);
+                getLogger().quiet(STOP_APP_DONE);
             }
         }
 
         public void afterDeployArtifacts() throws Exception {
             if (isAppStopped) {
-                getLogger().info(START_APP);
+                getLogger().quiet(START_APP);
 
                 getWebApp().start();
                 isAppStopped = false;
 
-                getLogger().info(START_APP_DONE);
+                getLogger().quiet(START_APP_DONE);
             }
         }
     }
