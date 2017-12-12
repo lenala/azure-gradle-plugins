@@ -50,3 +50,5 @@ certificate=(optional)
 certificatePassword=(optional)
 environment=(optional)
 ```
+
+`subscriptionId` can be also provided in gradle.properties, in case it is different from default subscription id. 

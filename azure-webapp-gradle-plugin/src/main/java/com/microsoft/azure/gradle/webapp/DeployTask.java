@@ -134,7 +134,7 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
 
     @Override
     public String getSubscriptionId() {
-        return (String) getProject().getProperties().get("auth.subscriptionId");
+        return (String) getProject().getProperties().get("subscriptionId");
     }
 
     // todo
