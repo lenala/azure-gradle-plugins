@@ -51,4 +51,37 @@ certificatePassword=(optional)
 environment=(optional)
 ```
 
-`subscriptionId` can be also provided in gradle.properties, in case it is different from default subscription id. 
+`subscriptionId` can be also provided in gradle.properties, in case it is different from default subscription id.
+
+# 4 types of deployment are supported:
+
+## Deployment from Private Container Registry (Azure Container Registry)
+
+```
+azurewebapp {
+    resourceGroup = <resource_group>
+    appName = <appName>
+    pricingTier = "S1"
+    containerSettings = {
+        imageName = <image_name>
+        serverId = <server_id>
+        registryUrl = "https://" + serverId
+    }
+}
+```
+
+## Deplyment from public Docke Hub
+
+## Deployment from private Docker Hub
+
+## Deployment to App Service on Windows
+```
+azurewebapp {
+    resourceGroup = <resource_group>
+    appName = <appName>
+    javaVersion = "1.8.0_102"
+    pricingTier = "S2"
+    javaWebContainer = "tomcat 7.0"
+    target = <path_to_war_file>
+}
+``` 
