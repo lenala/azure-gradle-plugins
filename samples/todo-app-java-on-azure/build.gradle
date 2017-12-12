@@ -25,17 +25,15 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 apply plugin: 'com.microsoft.azure.azurewebapp'
 
 import com.bmuschko.gradle.docker.tasks.image.*
-import com.microsoft.azure.gradle.webapp.DeployTask
 
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.8.RELEASE'
     compile group: 'com.microsoft.azure', name: 'azure-documentdb-spring-boot-starter', version:'0.2.0'
 }
 
-group = 'elenaregistry.azurecr.io'
 version = 'v0.15'
-def dockerImagePrefix = 'elenaregistry.azurecr.io'
 def projectArtifactId = "myimage"
+def dockerImage = serverId + "/" + projectArtifactId + ":" + version
 
 description = "todo-app-java-on-azure"
 
@@ -62,31 +60,32 @@ task buildImage(type: DockerBuildImage) {
     noCache = false
     remove = true
     inputDir file('./build')   //createDockerfile.destFile.parentFile + "/lib"
-    tag 'elenaregistry.azurecr.io/myimage:' + version
+    tag dockerImage
 }
 
 task dockerPushImage(type: DockerPushImage) {
     dependsOn buildImage
-    imageName 'elenaregistry.azurecr.io/myimage:' + version
+    imageName dockerImage
 }
 
 docker {
     registryCredentials {
-        url = 'http://elenaregistry.azurecr.io/'
-        username = 'elenaregistry'
-        password = '<password>'
+        url = 'http://' + serverId
+        username = serverUsername
+        password = serverPassword
         email = 'lena.lakhno@gmail.com'
     }
 }
 
-deploy {
+azurewebapp {
     resourceGroup = "rg5"
-    appName = "mynewwebapplena15"
+    appName = "mynewwebapplena18"
     pricingTier = "S2"
+    authFile = 'C:/stuff/demo.azureauth'
     containerSettings = {
-        imageName = dockerImagePrefix + "/" + projectArtifactId + ":" + version
-        registryUrl = "https://" + dockerImagePrefix
-        serverId = dockerImagePrefix
+        imageName = dockerImage
+        serverId = project.property('serverId')
+        registryUrl = "https://" + serverId
     }
 }
 

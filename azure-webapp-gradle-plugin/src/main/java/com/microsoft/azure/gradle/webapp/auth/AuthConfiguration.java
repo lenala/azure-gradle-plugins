@@ -12,5 +12,9 @@ public interface AuthConfiguration {
 
     String getUserAgent();
 
-    AuthenticationSetting getAuthenticationSetting();
+    boolean hasAuthenticationSettings();
+
+    String getAuthenticationSetting(String key);
+
+    String getAuthFile();
 }

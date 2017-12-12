@@ -2,7 +2,7 @@ plugins {
     id "com.microsoft.azure.azurewebapp"
 }
 
-deploy {
+azurewebapp {
     resourceGroup = "rg238910"
     appName = "mynewwebapplena8"
     javaVersion = "1.8.0_102"

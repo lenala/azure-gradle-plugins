@@ -6,7 +6,6 @@
 package com.microsoft.azure.gradle.webapp;
 
 import com.microsoft.azure.gradle.webapp.auth.AuthConfiguration;
-import com.microsoft.azure.gradle.webapp.auth.AuthenticationSetting;
 import com.microsoft.azure.gradle.webapp.auth.AzureAuthFailureException;
 import com.microsoft.azure.gradle.webapp.auth.AzureAuthHelper;
 import com.microsoft.azure.gradle.webapp.handlers.HandlerFactory;
@@ -15,8 +14,6 @@ import com.microsoft.azure.management.appservice.WebApp;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-
-import java.io.File;
 
 public class DeployTask extends DefaultTask implements AuthConfiguration {
     public static final String AZURE_INIT_FAIL = "Failed to authenticate with Azure. Please check your configuration.";
@@ -151,16 +148,18 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     }
 
     @Override
-    public AuthenticationSetting getAuthenticationSetting() {
-        if (getProject().hasProperty("auth.server.id") || getProject().hasProperty("auth.file")) {
-            AuthenticationSetting authenticationSetting = new AuthenticationSetting();
-            authenticationSetting.setServerId((String) getProject().getProperties().get("auth.server.id"));
-            if (getProject().hasProperty("auth.file")) {
-                authenticationSetting.setFile(new File((String) getProject().getProperties().get("auth.file")));
-            }
-            return authenticationSetting;
-        }
-        return null;
+    public boolean hasAuthenticationSettings() {
+        return getProject().getProperties().containsKey(AzureAuthHelper.CLIENT_ID) || azureWebAppExtension.getAuthFile() != null;
+    }
+
+    @Override
+    public String getAuthenticationSetting(String key) {
+        return (String) getProject().getProperties().get(key);
+    }
+
+    @Override
+    public String getAuthFile() {
+        return azureWebAppExtension.getAuthFile();
     }
 
     class DeploymentUtil {

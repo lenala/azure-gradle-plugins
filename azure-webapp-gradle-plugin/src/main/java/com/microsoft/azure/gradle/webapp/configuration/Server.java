@@ -8,6 +8,9 @@ package com.microsoft.azure.gradle.webapp.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is used to store credentials information for container registry.
+ */
 public class Server {
     private String id;
     private String username;

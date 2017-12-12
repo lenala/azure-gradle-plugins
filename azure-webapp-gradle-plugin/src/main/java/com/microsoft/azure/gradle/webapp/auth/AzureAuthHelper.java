@@ -9,8 +9,6 @@ package com.microsoft.azure.gradle.webapp.auth;
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.ApplicationTokenCredentials;
 import com.microsoft.azure.credentials.AzureCliCredentials;
-import com.microsoft.azure.gradle.webapp.configuration.Server;
-import com.microsoft.azure.gradle.webapp.helpers.Utils;
 import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.Azure.Authenticated;
 import com.microsoft.rest.LogLevel;
@@ -34,20 +32,17 @@ public class AzureAuthHelper {
     public static final String CERTIFICATE_PASSWORD = "certificatePassword";
     public static final String ENVIRONMENT = "environment";
 
-    public static final String AUTH_WITH_SERVER_ID = "Authenticate with ServerId: ";
+    public static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
     public static final String AUTH_WITH_FILE = "Authenticate with file: ";
     public static final String AUTH_WITH_AZURE_CLI = "Authenticate with Azure CLI 2.0";
     public static final String USE_KEY_TO_AUTH = "Use key to get Azure authentication token: ";
     public static final String USE_CERTIFICATE_TO_AUTH = "Use certificate to get Azure authentication token.";
 
-    public static final String SERVER_ID_NOT_CONFIG = "ServerId is not configured for Azure authentication.";
-    public static final String SERVER_ID_NOT_FOUND = "Server not found in settings.xml. ServerId=";
     public static final String CLIENT_ID_NOT_CONFIG = "Client Id of your service principal is not configured.";
     public static final String TENANT_ID_NOT_CONFIG = "Tenant Id of your service principal is not configured.";
     public static final String KEY_NOT_CONFIG = "Key of your service principal is not configured.";
     public static final String CERTIFICATE_FILE_NOT_CONFIG = "Certificate of your service principal is not configured.";
     public static final String CERTIFICATE_FILE_READ_FAIL = "Failed to read certificate file: ";
-    public static final String AZURE_AUTH_INVALID = "Authentication info for Azure is not valid. ServerId=";
     public static final String AUTH_FILE_NOT_CONFIG = "Authentication file is not configured.";
     public static final String AUTH_FILE_NOT_EXIST = "Authentication file does not exist: ";
     public static final String AUTH_FILE_READ_FAIL = "Failed to read authentication file: ";
@@ -73,7 +68,6 @@ public class AzureAuthHelper {
         if (auth == null) {
             return null;
         }
-
         try {
             final String subscriptionId = config.getSubscriptionId();
             return StringUtils.isEmpty(subscriptionId) ?
@@ -116,11 +110,12 @@ public class AzureAuthHelper {
 
     protected Authenticated getAuthObj() {
         Authenticated auth;
-        final AuthenticationSetting authSetting = config.getAuthenticationSetting();
-        if (authSetting != null) {
-            auth = getAuthObjFromServerId(config, authSetting.getServerId());
+        // check if project has Azure authentication settings in build.gradle or gradle.properties
+        boolean hasAuthSetting = config.hasAuthenticationSettings();
+        if (hasAuthSetting) {
+            auth = getAuthObjFromConfiguration(config);
             if (auth == null) {
-                auth = getAuthObjFromFile(authSetting.getFile());
+                auth = getAuthObjFromFile(new File(config.getAuthFile()));
             }
         } else {
             auth = getAuthObjFromAzureCli();
@@ -129,35 +124,21 @@ public class AzureAuthHelper {
     }
 
     /**
-     * Get Authenticated object by referencing server definition in Maven settings.xml
+     * Get Authenticated object by reading app token credentials from gradle.properties
      *
-     * @param serverId Server Id to search in settings.xml
      * @return Authenticated object if configurations are correct; otherwise return null.
      */
-    protected Authenticated getAuthObjFromServerId(final AuthConfiguration config, final String serverId) {
-        return null;
-//        if (StringUtils.isEmpty(serverId)) {
-//            logger.debug(SERVER_ID_NOT_CONFIG);
-//            return null;
-//        }
-//
-//        final Server server = Utils.getServer(settings, serverId);
-//        if (server == null) {
-//            logger.error(SERVER_ID_NOT_FOUND + serverId);
-//            return null;
-//        }
-//
-//        final ApplicationTokenCredentials credential = getAppTokenCredentialsFromServer(server);
-//        if (credential == null) {
-//            logger.error(AZURE_AUTH_INVALID + serverId);
-//            return null;
-//        }
-//
-//        final Authenticated auth = azureConfigure().authenticate(credential);
-//        if (auth != null) {
-//            logger.quiet(AUTH_WITH_SERVER_ID + serverId);
-//        }
-//        return auth;
+    protected Authenticated getAuthObjFromConfiguration(final AuthConfiguration config) {
+        final ApplicationTokenCredentials credential = getAppTokenCredentials();
+        if (credential == null) {
+            return null;
+        }
+
+        final Authenticated auth = azureConfigure().authenticate(credential);
+        if (auth != null) {
+            logger.quiet(AUTH_WITH_CLIENT_ID + config.getAuthenticationSetting(CLIENT_ID));
+        }
+        return auth;
     }
 
     /**
@@ -208,72 +189,50 @@ public class AzureAuthHelper {
     }
 
     /**
-     * Get ApplicationTokenCredentials from server definition in gradle.properties.
+     * Get ApplicationTokenCredentials from authentication settings in gradle.properties.
      *
-     * @param server Server object
      * @return ApplicationTokenCredentials object if configuration is correct; otherwise return null.
      */
-    protected ApplicationTokenCredentials getAppTokenCredentialsFromServer(Server server) {
-        if (server == null) {
-            return null;
-        }
-
-        final String clientId = Utils.getValueFromServerConfiguration(server, CLIENT_ID);
+    protected ApplicationTokenCredentials getAppTokenCredentials() {
+        final String clientId = config.getAuthenticationSetting(CLIENT_ID);
         if (StringUtils.isEmpty(clientId)) {
-            logger.debug(CLIENT_ID_NOT_CONFIG);
+            logger.quiet(CLIENT_ID_NOT_CONFIG);
             return null;
         }
 
-        final String tenantId = Utils.getValueFromServerConfiguration(server, TENANT_ID);
+        final String tenantId = config.getAuthenticationSetting(TENANT_ID);
         if (StringUtils.isEmpty(tenantId)) {
-            logger.debug(TENANT_ID_NOT_CONFIG);
+            logger.quiet(TENANT_ID_NOT_CONFIG);
             return null;
         }
 
-        final String environment = Utils.getValueFromServerConfiguration(server, ENVIRONMENT);
+        final String environment = config.getAuthenticationSetting(ENVIRONMENT);
         final AzureEnvironment azureEnvironment = getAzureEnvironment(environment);
-        logger.debug("Azure Management Endpoint: " + azureEnvironment.managementEndpoint());
+        logger.quiet("Azure Management Endpoint: " + azureEnvironment.managementEndpoint());
 
-        final String key = Utils.getValueFromServerConfiguration(server, KEY);
+        final String key = config.getAuthenticationSetting(KEY);
         if (!StringUtils.isEmpty(key)) {
-            logger.debug(USE_KEY_TO_AUTH);
+            logger.quiet(USE_KEY_TO_AUTH);
             return new ApplicationTokenCredentials(clientId, tenantId, key, azureEnvironment);
         } else {
-            logger.debug(KEY_NOT_CONFIG);
+            logger.quiet(KEY_NOT_CONFIG);
         }
 
-        final String certificate = Utils.getValueFromServerConfiguration(server, CERTIFICATE);
+        final String certificate = config.getAuthenticationSetting(CERTIFICATE);
         if (StringUtils.isEmpty(certificate)) {
-            logger.debug(CERTIFICATE_FILE_NOT_CONFIG);
+            logger.quiet(CERTIFICATE_FILE_NOT_CONFIG);
             return null;
         }
 
-        final String certificatePassword = Utils.getValueFromServerConfiguration(server, CERTIFICATE_PASSWORD);
+        final String certificatePassword = config.getAuthenticationSetting(CERTIFICATE_PASSWORD);
         try {
             byte[] cert;
             cert = Files.readAllBytes(Paths.get(certificate, new String[0]));
-            logger.debug(USE_CERTIFICATE_TO_AUTH + certificate);
+            logger.quiet(USE_CERTIFICATE_TO_AUTH + certificate);
             return new ApplicationTokenCredentials(clientId, tenantId, cert, certificatePassword, azureEnvironment);
         } catch (Exception e) {
-            logger.debug(CERTIFICATE_FILE_READ_FAIL + certificate);
+            logger.quiet(CERTIFICATE_FILE_READ_FAIL + certificate);
         }
-
         return null;
-    }
-
-    // TODO:
-    // Add AuthType ENUM and move to AzureAuthHelper.
-    public String getAuthType() {
-        final AuthenticationSetting authSetting = config.getAuthenticationSetting();
-        if (authSetting == null) {
-            return "AzureCLI";
-        }
-        if (StringUtils.isNotEmpty(authSetting.getServerId())) {
-            return "ServerId";
-        }
-        if (authSetting.getFile() != null) {
-            return "AuthFile";
-        }
-        return "Unknown";
     }
 }

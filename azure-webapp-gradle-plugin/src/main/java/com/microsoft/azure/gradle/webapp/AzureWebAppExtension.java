@@ -32,9 +32,10 @@ public class AzureWebAppExtension {
     private String target;
     @Input
     private boolean stopAppDuringDeployment;
-
     @Input
     private String subscriptionId;
+    @Input
+    private String authFile;
 
     ContainerSettings containerSettings;
     private Project project;
@@ -86,5 +87,9 @@ public class AzureWebAppExtension {
 
     public boolean isStopAppDuringDeployment() {
         return stopAppDuringDeployment;
+    }
+
+    public String getAuthFile() {
+        return authFile;
     }
 }
