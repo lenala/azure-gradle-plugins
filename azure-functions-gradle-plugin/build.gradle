@@ -1,0 +1,47 @@
+group 'com.microsoft.azure'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'com.microsoft.azure:azure:1.4.0'
+    compile 'commons-net:commons-net:3.6'
+    compile 'commons-io:commons-io:2.2'
+    compile 'com.microsoft.azure:azure-functions-java-core:[1.0.0-beta-1,1.0.0)'
+    compile 'org.reflections:reflections:0.9.11'
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4.12'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../../Users/elenla.REDMOND/.m2/repository'))
+        }
+    }
+}
+
+task createClasspathManifest {
+    def outputDir = file("$buildDir/$name")
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+}
+
+dependencies {
+    testRuntime files(createClasspathManifest)
+}
