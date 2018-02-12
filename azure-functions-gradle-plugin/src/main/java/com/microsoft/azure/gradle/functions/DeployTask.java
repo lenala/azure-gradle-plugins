@@ -11,6 +11,17 @@ import com.microsoft.azure.management.Azure;
 import org.gradle.api.DefaultTask;
 
 public class DeployTask  extends DefaultTask implements AuthConfiguration {
+    public static final String FUNCTION_DEPLOY_START = "Starting deploying to Function App ";
+    public static final String FUNCTION_DEPLOY_SUCCESS =
+            "Successfully deployed Function App at https://%s.azurewebsites.net";
+    public static final String FUNCTION_APP_CREATE_START = "Target Function App does not exist. " +
+            "Creating a new Function App ...";
+    public static final String FUNCTION_APP_CREATED = "Successfully created Function App ";
+    public static final String FUNCTION_APP_UPDATE = "Updating Function App...";
+    public static final String FUNCTION_APP_UPDATE_DONE = "Successfully updated Function App ";
+
+    public static final String MS_DEPLOY = "msdeploy";
+    public static final String FTP = "ftp";
 
     private Azure azure;
     private AzureFunctionsExtension azureFunctionsExtension;
