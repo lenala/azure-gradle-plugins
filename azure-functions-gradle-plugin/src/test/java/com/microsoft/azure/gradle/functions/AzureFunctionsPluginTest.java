@@ -17,6 +17,6 @@ public class AzureFunctionsPluginTest {
         Project project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("com.microsoft.azure.azurefunctions");
 
-        assertTrue(project.getTasks().findByPath("deploy") instanceof DeployTask2);
+        assertTrue(project.getTasks().findByPath("package") instanceof PackageTask);
     }
 }

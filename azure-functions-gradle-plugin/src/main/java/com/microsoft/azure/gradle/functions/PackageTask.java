@@ -8,27 +8,26 @@ package com.microsoft.azure.gradle.functions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.microsoft.azure.gradle.functions.auth.AuthConfiguration;
 import com.microsoft.azure.gradle.functions.auth.AzureAuthFailureException;
 import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
 import com.microsoft.azure.gradle.functions.configuration.FunctionConfiguration;
 import com.microsoft.azure.gradle.functions.handlers.AnnotationHandler;
 import com.microsoft.azure.gradle.functions.handlers.AnnotationHandlerImpl;
-import com.microsoft.azure.gradle.functions.helpers.Utils;
-import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.appservice.FunctionApp;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 
-public class PackageTask  extends DefaultTask implements AuthConfiguration {
+import static com.microsoft.azure.gradle.functions.AzureFunctionsPlugin.AZURE_FUNCTIONS;
+
+public class PackageTask extends FunctionsTask {
     public static final String SEARCH_FUNCTIONS = "Step 1 of 6: Searching for Azure Function entry points";
     public static final String FOUND_FUNCTIONS = " Azure Function entry point(s) found.";
     public static final String GENERATE_CONFIG = "Step 2 of 6: Generating Azure Function configurations";
@@ -48,10 +47,6 @@ public class PackageTask  extends DefaultTask implements AuthConfiguration {
 
     public static final String FUNCTION_JSON = "function.json";
     public static final String HOST_JSON = "host.json";
-
-    private Azure azure;
-    private AzureFunctionsExtension azureFunctionsExtension;
-    private AzureAuthHelper azureAuthHelper;
 
     @TaskAction
     void packageFunction() {
@@ -95,6 +90,18 @@ public class PackageTask  extends DefaultTask implements AuthConfiguration {
         }
         getLogger().quiet(functions.size() + FOUND_FUNCTIONS);
         return functions;
+    }
+
+    protected URL getArtifactUrl() throws Exception {
+        return null;
+//        return this.getProject().Artifact().getFile().toURI().toURL();
+        //        return this.getProject().getArtifact().getFile().toURI().toURL();
+    }
+
+    protected URL getTargetClassUrl() throws Exception {
+        return getProject().getBuildDir().toURI().toURL();
+//        return new URL(getProject().getBuildDir().getAbsolutePath() + "/classes");
+//        return outputDirectory.toURI().toURL();
     }
 
     protected Map<String, FunctionConfiguration> getFunctionConfigurations(final AnnotationHandler handler,
@@ -175,12 +182,12 @@ public class PackageTask  extends DefaultTask implements AuthConfiguration {
     protected void copyJarsToStageDirectory() throws IOException {
         final String stagingDirectory = getDeploymentStageDirectory();
         getLogger().quiet(COPY_JARS + stagingDirectory);
-        Utils.copyResources(
-                getProject(),
-                getSession(),
-                getMavenResourcesFiltering(),
-                getResources(),
-                stagingDirectory);
+//        Utils.copyResources(
+//                getProject(),
+//                getSession(),
+//                getMavenResourcesFiltering(),
+//                getResources(),
+//                stagingDirectory);
         getLogger().quiet(COPY_SUCCESS);
     }
 
@@ -191,46 +198,15 @@ public class PackageTask  extends DefaultTask implements AuthConfiguration {
     }
 
 
-
-    @Override
-    public String getUserAgent() {
-        return getName() + " " + getGroup();
-//        return String.format("%s/%s %s:%s %s:%s", this.getName(), this.getGroup()
-//                getPluginName(), getPluginVersion(),
-//                INSTALLATION_ID_KEY, getInstallationId(),
-//                SESSION_ID_KEY, getSessionId());
-    }
-
-    @Override
-    public String getSubscriptionId() {
-        return (String) getProject().getProperties().get("subscriptionId");
-    }
-
-    @Override
-    public boolean hasAuthenticationSettings() {
-        return getProject().getProperties().containsKey(AzureAuthHelper.CLIENT_ID) || azureFunctionsExtension.getAuthFile() != null;
-    }
-
-    @Override
-    public String getAuthenticationSetting(String key) {
-        return (String) getProject().getProperties().get(key);
-    }
-
-    @Override
-    public String getAuthFile() {
-        return azureFunctionsExtension.getAuthFile();
-    }
-
-
     public String getDeploymentStageDirectory() {
         return Paths.get(getBuildDirectoryAbsolutePath(),
                 AZURE_FUNCTIONS,
-                getAppName()).toString();
+                azureFunctionsExtension.getAppName()).toString();
     }
 
     public FunctionApp getFunctionApp() throws AzureAuthFailureException {
         try {
-            return getAzureClient().appServices().functionApps().getByResourceGroup(getResourceGroup(), getAppName());
+            return getAzureClient().appServices().functionApps().getByResourceGroup(azureFunctionsExtension.getResourceGroup(), azureFunctionsExtension.getAppName());
         } catch (AzureAuthFailureException authEx) {
             throw authEx;
         } catch (Exception ex) {
