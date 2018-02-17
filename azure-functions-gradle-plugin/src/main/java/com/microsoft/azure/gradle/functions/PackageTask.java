@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 
-import static com.microsoft.azure.gradle.functions.AzureFunctionsPlugin.AZURE_FUNCTIONS;
 
 public class PackageTask extends FunctionsTask {
     public static final String SEARCH_FUNCTIONS = "Step 1 of 6: Searching for Azure Function entry points";
@@ -195,13 +194,6 @@ public class PackageTask extends FunctionsTask {
     public void setAzureFunctionsExtension(AzureFunctionsExtension azureFunctionsExtension) {
         this.azureFunctionsExtension = azureFunctionsExtension;
         azureAuthHelper = new AzureAuthHelper(this);
-    }
-
-
-    public String getDeploymentStageDirectory() {
-        return Paths.get(getBuildDirectoryAbsolutePath(),
-                AZURE_FUNCTIONS,
-                azureFunctionsExtension.getAppName()).toString();
     }
 
     public FunctionApp getFunctionApp() throws AzureAuthFailureException {

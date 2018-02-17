@@ -11,6 +11,10 @@ import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
 import com.microsoft.azure.management.Azure;
 import org.gradle.api.DefaultTask;
 
+import java.nio.file.Paths;
+
+import static com.microsoft.azure.gradle.functions.AzureFunctionsPlugin.AZURE_FUNCTIONS;
+
 abstract class FunctionsTask extends DefaultTask implements AuthConfiguration {
     public static final String AZURE_INIT_FAIL = "Failed to authenticate with Azure. Please check your configuration.";
 
@@ -68,5 +72,11 @@ abstract class FunctionsTask extends DefaultTask implements AuthConfiguration {
 
     public String getBuildDirectoryAbsolutePath() {
         return getProject().getBuildDir().getAbsolutePath();
+    }
+
+    public String getDeploymentStageDirectory() {
+        return Paths.get(getBuildDirectoryAbsolutePath(),
+                AZURE_FUNCTIONS,
+                azureFunctionsExtension.getAppName()).toString();
     }
 }
