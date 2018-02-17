@@ -12,6 +12,8 @@ import com.microsoft.azure.management.Azure;
 import org.gradle.api.DefaultTask;
 
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.microsoft.azure.gradle.functions.AzureFunctionsPlugin.AZURE_FUNCTIONS;
 
@@ -25,6 +27,10 @@ abstract class FunctionsTask extends DefaultTask implements AuthConfiguration {
     public String getFinalName() {
         return "finalName";
 //        return finalName;
+    }
+
+    public Map getAppSettings() {
+        return new HashMap();//appSettings;
     }
 
     @Override
