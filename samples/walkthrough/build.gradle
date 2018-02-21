@@ -20,6 +20,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'com.microsoft.azure.azurefunctions'
 
+import com.microsoft.azure.gradle.functions.*;
+
 dependencies {
     compile 'com.microsoft.azure:azure-functions-java-core:1.0.0-beta-2'
 }
@@ -38,9 +40,13 @@ jar {
 }
 
 azurefunctions {
-    resourceGroup = "rg1"
-    appName = "myfunctionappelena1"
     authFile = 'C:/stuff/my.azureauth'
+}
+
+task deploy(type: DeployTask) {
+    appName = "lenaFunctionApp"
+    resourceGroup = "lenaFunctionApp"
+    region = "westus"
 }
 
 repositories {

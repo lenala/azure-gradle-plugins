@@ -11,7 +11,6 @@ import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
 import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.appservice.FunctionApp;
 import org.gradle.api.DefaultTask;
-import org.gradle.internal.impldep.org.apache.maven.settings.Settings;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
     protected AzureAuthHelper azureAuthHelper;
     private Azure azure;
 
-    protected Settings settings;
+    protected Object settings;
 
     /**
      * Resource group of Function App. It will be created if it doesn't exist.
@@ -41,7 +40,7 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
     /**
      * Function App region, which will only be used to create Function App at the first time.
      */
-    protected String region;
+    protected String region= "westus2";
 
     public String getFinalName() {
         return "finalName";
@@ -56,12 +55,29 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
         return appName;
     }
 
+    public void setResourceGroup(String resourceGroup) {
+        this.resourceGroup = resourceGroup;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
     public String getRegion() {
         return region;
     }
 
     public Map getAppSettings() {
         return new HashMap();//appSettings;
+    }
+
+    FunctionsTask() {
+        azureAuthHelper = new AzureAuthHelper(this);
+        azureFunctionsExtension = (AzureFunctionsExtension) getProject().getExtensions().getByName(AZURE_FUNCTIONS);
     }
 
     @Override

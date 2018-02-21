@@ -146,7 +146,7 @@ public class AddTask extends FunctionsTask {
     private FunctionTemplate getFunctionTemplate(final List<FunctionTemplate> templates) throws Exception {
         getLogger().quiet(FIND_TEMPLATE);
 
-        if (settings != null && !settings.isInteractiveMode()) {
+        if (settings != null/* && !settings.isInteractiveMode()*/) {
             assureInputInBatchMode(getFunctionTemplate(),
                     str -> getTemplateNames(templates)
                             .stream()
@@ -205,7 +205,7 @@ public class AddTask extends FunctionsTask {
     private void prepareFunctionName() throws TaskExecutionException {
         getLogger().quiet("Common parameter [Function Name]: name for both the new function and Java class");
 
-        if (settings != null && !settings.isInteractiveMode()) {
+        if (settings != null/* && !settings.isInteractiveMode()*/) {
             assureInputInBatchMode(getFunctionName(),
                     str -> isNotEmpty(str) && str.matches(FUNCTION_NAME_REGEXP),
                     this::setFunctionName,
@@ -222,7 +222,7 @@ public class AddTask extends FunctionsTask {
     private void preparePackageName() throws TaskExecutionException {
         getLogger().quiet("Common parameter [Package Name]: package name of the new Java class");
 
-        if (settings != null && !settings.isInteractiveMode()) {
+        if (settings != null/* && !settings.isInteractiveMode()*/) {
             assureInputInBatchMode(getFunctionPackageName(),
                     str -> isNotEmpty(str) && isName(str),
                     this::setFunctionPackageName,
@@ -243,7 +243,7 @@ public class AddTask extends FunctionsTask {
             getLogger().quiet(format("Trigger specific parameter [%s]", property));
 
             final List<String> options = getOptionsForUserPrompt(property);
-            if (settings != null && !settings.isInteractiveMode()) {
+            if (settings != null/* && !settings.isInteractiveMode()*/) {
                 String initValue = System.getProperty(property);
                 if (options != null && options.size() > 0) {
                     final String foundElement = findElementInOptions(options, initValue);

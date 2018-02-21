@@ -41,10 +41,6 @@ public class DeployTask extends FunctionsTask {
     public static final String MS_DEPLOY = "msdeploy";
     public static final String FTP = "ftp";
 
-    private Azure azure;
-    private AzureFunctionsExtension azureFunctionsExtension;
-    private AzureAuthHelper azureAuthHelper;
-
     /**
      * Function App pricing tier, which will only be used to create Function App at the first time.<br/>
      * Below is the list of supported pricing tier. If left blank, Consumption plan is the default.
@@ -92,15 +88,10 @@ public class DeployTask extends FunctionsTask {
     }
 
 
-    public void setAzureFunctionsExtension(AzureFunctionsExtension azureFunctionsExtension) {
-        this.azureFunctionsExtension = azureFunctionsExtension;
-        azureAuthHelper = new AzureAuthHelper(this);
-    }
-
     @TaskAction
     void packageFunction() {
         try {
-            getLogger().quiet(FUNCTION_DEPLOY_START + azureFunctionsExtension.getAppName() + "...");
+            getLogger().quiet(FUNCTION_DEPLOY_START + getAppName() + "...");
 
             createOrUpdateFunctionApp();
 

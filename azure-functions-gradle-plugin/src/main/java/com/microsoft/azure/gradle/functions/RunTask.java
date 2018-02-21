@@ -179,34 +179,4 @@ public class RunTask  extends FunctionsTask {
             getLogger().quiet(StringUtils.strip(input, "\n")); // error?
         }
     }
-
-    @Override
-    public String getUserAgent() {
-        return getName() + " " + getGroup();
-//        return String.format("%s/%s %s:%s %s:%s", this.getName(), this.getGroup()
-//                getPluginName(), getPluginVersion(),
-//                INSTALLATION_ID_KEY, getInstallationId(),
-//                SESSION_ID_KEY, getSessionId());
-    }
-
-    @Override
-    public String getSubscriptionId() {
-        return (String) getProject().getProperties().get("subscriptionId");
-    }
-
-    @Override
-    public boolean hasAuthenticationSettings() {
-        return getProject().getProperties().containsKey(AzureAuthHelper.CLIENT_ID) || azureFunctionsExtension.getAuthFile() != null;
-    }
-
-    @Override
-    public String getAuthenticationSetting(String key) {
-        return (String) getProject().getProperties().get(key);
-    }
-
-    @Override
-    public String getAuthFile() {
-        return azureFunctionsExtension.getAuthFile();
-    }
-
 }
