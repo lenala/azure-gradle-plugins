@@ -6,12 +6,12 @@
 
 package com.microsoft.azure.gradle.functions.handlers;
 
+import com.microsoft.azure.gradle.functions.AzureStorageHelper;
+import com.microsoft.azure.gradle.functions.FunctionsTask;
 import com.microsoft.azure.management.appservice.AppSetting;
 import com.microsoft.azure.management.appservice.FunctionApp;
-import com.microsoft.azure.maven.function.AbstractFunctionMojo;
-import com.microsoft.azure.maven.function.AzureStorageHelper;
 import com.microsoft.azure.storage.CloudStorageAccount;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
@@ -19,36 +19,36 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
-    public static final String DEPLOYMENT_PACKAGE_CONTAINER = "java-functions-deployment-packages";
-    public static final String ZIP_EXT = ".zip";
-    public static final String CREATE_ZIP_START = "Step 1 of 4: Creating ZIP package...";
-    public static final String CREATE_ZIP_DONE = "Successfully saved ZIP package at ";
-    public static final String STAGE_DIR_NOT_FOUND = "Function App stage directory not found. " +
+    private static final String DEPLOYMENT_PACKAGE_CONTAINER = "java-functions-deployment-packages";
+    private static final String ZIP_EXT = ".zip";
+    private static final String CREATE_ZIP_START = "Step 1 of 4: Creating ZIP package...";
+    private static final String CREATE_ZIP_DONE = "Successfully saved ZIP package at ";
+    private static final String STAGE_DIR_NOT_FOUND = "Function App stage directory not found. " +
             "Please run 'mvn package azure-functions:package' first.";
-    public static final String LOCAL_SETTINGS_FILE = "local.settings.json";
-    public static final String REMOVE_LOCAL_SETTINGS = "Remove local.settings.json from ZIP package.";
-    public static final String INTERNAL_STORAGE_KEY = "AzureWebJobsStorage";
-    public static final String INTERNAL_STORAGE_NOT_FOUND = "Application setting 'AzureWebJobsStorage' not found.";
-    public static final String INTERNAL_STORAGE_CONNECTION_STRING = "Function App Internal Storage Connection String: ";
-    public static final String UPLOAD_PACKAGE_START = "Step 2 of 4: Uploading ZIP package to Azure Storage...";
-    public static final String UPLOAD_PACKAGE_DONE = "Successfully uploaded ZIP package to ";
-    public static final String DEPLOY_PACKAGE_START = "Step 3 of 4: Deploying Function App with package...";
-    public static final String DEPLOY_PACKAGE_DONE = "Successfully deployed Function App with package.";
-    public static final String DELETE_PACKAGE_START = "Step 4 of 4: Deleting deployment package from Azure Storage...";
-    public static final String DELETE_PACKAGE_DONE = "Successfully deleted deployment package ";
-    public static final String DELETE_PACKAGE_FAIL = "Failed to delete deployment package ";
+    private static final String LOCAL_SETTINGS_FILE = "local.settings.json";
+    private static final String REMOVE_LOCAL_SETTINGS = "Remove local.settings.json from ZIP package.";
+    private static final String INTERNAL_STORAGE_KEY = "AzureWebJobsStorage";
+    private static final String INTERNAL_STORAGE_NOT_FOUND = "Application setting 'AzureWebJobsStorage' not found.";
+    private static final String INTERNAL_STORAGE_CONNECTION_STRING = "Function App Internal Storage Connection String: ";
+    private static final String UPLOAD_PACKAGE_START = "Step 2 of 4: Uploading ZIP package to Azure Storage...";
+    private static final String UPLOAD_PACKAGE_DONE = "Successfully uploaded ZIP package to ";
+    private static final String DEPLOY_PACKAGE_START = "Step 3 of 4: Deploying Function App with package...";
+    private static final String DEPLOY_PACKAGE_DONE = "Successfully deployed Function App with package.";
+    private static final String DELETE_PACKAGE_START = "Step 4 of 4: Deleting deployment package from Azure Storage...";
+    private static final String DELETE_PACKAGE_DONE = "Successfully deleted deployment package ";
+    private static final String DELETE_PACKAGE_FAIL = "Failed to delete deployment package ";
 
-    private AbstractFunctionMojo mojo;
+    private FunctionsTask functionsTask;
 
-    public MSDeployArtifactHandlerImpl(final AbstractFunctionMojo mojo) {
-        this.mojo = mojo;
+    public MSDeployArtifactHandlerImpl(final FunctionsTask functionsTask) {
+        this.functionsTask = functionsTask;
     }
 
     @Override
     public void publish() throws Exception {
         final File zipPackage = createZipPackage();
 
-        final FunctionApp app = mojo.getFunctionApp();
+        final FunctionApp app = functionsTask.getFunctionApp();
 
         final CloudStorageAccount storageAccount = getCloudStorageAccount(app);
 
@@ -60,28 +60,28 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
     }
 
     protected void logInfo(final String message) {
-        if (mojo != null) {
-            mojo.getLog().info(message);
+        if (functionsTask != null) {
+            functionsTask.getLogger().quiet(message);
         }
     }
 
-    protected void logDebug(final String message) {
-        if (mojo != null) {
-            mojo.getLog().debug(message);
+    private void logDebug(final String message) {
+        if (functionsTask != null) {
+            functionsTask.getLogger().quiet(message);
         }
     }
 
-    protected void logError(final String message) {
-        if (mojo != null) {
-            mojo.getLog().error(message);
+    private void logError(final String message) {
+        if (functionsTask != null) {
+            functionsTask.getLogger().quiet(message);
         }
     }
 
-    protected File createZipPackage() throws Exception {
+    private File createZipPackage() throws Exception {
         logInfo("");
         logInfo(CREATE_ZIP_START);
 
-        final String stageDirectoryPath = mojo.getDeploymentStageDirectory();
+        final String stageDirectoryPath = functionsTask.getDeploymentStageDirectory();
         final File stageDirectory = new File(stageDirectoryPath);
         final File zipPackage = new File(stageDirectoryPath.concat(ZIP_EXT));
 
@@ -100,7 +100,7 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
     }
 
     protected CloudStorageAccount getCloudStorageAccount(final FunctionApp app) throws Exception {
-        final AppSetting internalStorageSetting = app.appSettings().get(INTERNAL_STORAGE_KEY);
+        final AppSetting internalStorageSetting = app.getAppSettings().get(INTERNAL_STORAGE_KEY);
         if (internalStorageSetting == null || StringUtils.isEmpty(internalStorageSetting.value())) {
             logError(INTERNAL_STORAGE_NOT_FOUND);
             throw new Exception(INTERNAL_STORAGE_NOT_FOUND);
@@ -110,7 +110,7 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
     }
 
     protected String getBlobName() {
-        return mojo.getAppName()
+        return functionsTask.getAppName()
                 .concat(new SimpleDateFormat(".yyyyMMddHHmmssSSS").format(new Date()))
                 .concat(ZIP_EXT);
     }

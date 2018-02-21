@@ -9,7 +9,9 @@ import com.microsoft.azure.gradle.functions.auth.AuthConfiguration;
 import com.microsoft.azure.gradle.functions.auth.AzureAuthFailureException;
 import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
 import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.appservice.FunctionApp;
 import org.gradle.api.DefaultTask;
+import org.gradle.internal.impldep.org.apache.maven.settings.Settings;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -17,16 +19,45 @@ import java.util.Map;
 
 import static com.microsoft.azure.gradle.functions.AzureFunctionsPlugin.AZURE_FUNCTIONS;
 
-abstract class FunctionsTask extends DefaultTask implements AuthConfiguration {
-    public static final String AZURE_INIT_FAIL = "Failed to authenticate with Azure. Please check your configuration.";
+public abstract class FunctionsTask extends DefaultTask implements AuthConfiguration {
+    private static final String AZURE_INIT_FAIL = "Failed to authenticate with Azure. Please check your configuration.";
 
     protected AzureFunctionsExtension azureFunctionsExtension;
     protected AzureAuthHelper azureAuthHelper;
     private Azure azure;
 
+    protected Settings settings;
+
+    /**
+     * Resource group of Function App. It will be created if it doesn't exist.
+     */
+    protected String resourceGroup;
+
+    /**
+     * Function App name. It will be created if it doesn't exist.
+     */
+    protected String appName;
+
+    /**
+     * Function App region, which will only be used to create Function App at the first time.
+     */
+    protected String region;
+
     public String getFinalName() {
         return "finalName";
 //        return finalName;
+    }
+
+    public String getResourceGroup() {
+        return resourceGroup;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getRegion() {
+        return region;
     }
 
     public Map getAppSettings() {
@@ -84,5 +115,16 @@ abstract class FunctionsTask extends DefaultTask implements AuthConfiguration {
         return Paths.get(getBuildDirectoryAbsolutePath(),
                 AZURE_FUNCTIONS,
                 azureFunctionsExtension.getAppName()).toString();
+    }
+
+    public FunctionApp getFunctionApp() throws AzureAuthFailureException {
+        try {
+            return getAzureClient().appServices().functionApps().getByResourceGroup(getResourceGroup(), getAppName());
+        } catch (AzureAuthFailureException authEx) {
+            throw authEx;
+        } catch (Exception ex) {
+            // Swallow exception for non-existing function app
+        }
+        return null;
     }
 }

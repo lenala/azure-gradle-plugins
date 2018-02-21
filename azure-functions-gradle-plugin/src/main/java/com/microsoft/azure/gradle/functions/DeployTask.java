@@ -13,9 +13,11 @@ import com.microsoft.azure.gradle.functions.handlers.AnnotationHandler;
 import com.microsoft.azure.gradle.functions.handlers.ArtifactHandler;
 import com.microsoft.azure.gradle.functions.handlers.FTPArtifactHandlerImpl;
 import com.microsoft.azure.gradle.functions.handlers.MSDeployArtifactHandlerImpl;
+import com.microsoft.azure.gradle.functions.model.PricingTierEnum;
 import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.appservice.FunctionApp;
 import com.microsoft.azure.management.appservice.PricingTier;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
@@ -43,6 +45,53 @@ public class DeployTask extends FunctionsTask {
     private AzureFunctionsExtension azureFunctionsExtension;
     private AzureAuthHelper azureAuthHelper;
 
+    /**
+     * Function App pricing tier, which will only be used to create Function App at the first time.<br/>
+     * Below is the list of supported pricing tier. If left blank, Consumption plan is the default.
+     * <ul>
+     * <li>F1</li>
+     * <li>D1</li>
+     * <li>B1</li>
+     * <li>B2</li>
+     * <li>B3</li>
+     * <li>S1</li>
+     * <li>S2</li>
+     * <li>S3</li>
+     * <li>P1</li>
+     * <li>P2</li>
+     * <li>P3</li>
+     * </ul>
+     */
+    protected PricingTierEnum pricingTier;
+
+    /**
+     * Deployment type to deploy Web App. Supported values:
+     * <ul>
+     * <li>msdeploy</li>
+     * <li>ftp</li>
+     * </ul>
+     *
+     * @since 0.1.0
+     */
+    protected String deploymentType;
+
+    public void setPricingTier(PricingTierEnum pricingTier) {
+        this.pricingTier = pricingTier;
+    }
+
+    public void setDeploymentType(String deploymentType) {
+        this.deploymentType = deploymentType;
+    }
+
+    public PricingTier getPricingTier() {
+        return pricingTier == null ? null : pricingTier.toPricingTier();
+    }
+
+    public String getDeploymentType() {
+        return StringUtils.isEmpty(deploymentType) ? MS_DEPLOY : deploymentType;
+    }
+
+
     public void setAzureFunctionsExtension(AzureFunctionsExtension azureFunctionsExtension) {
         this.azureFunctionsExtension = azureFunctionsExtension;
         azureAuthHelper = new AzureAuthHelper(this);
@@ -63,7 +112,7 @@ public class DeployTask extends FunctionsTask {
         }
     }
 
-    protected void createOrUpdateFunctionApp() throws Exception {
+    private void createOrUpdateFunctionApp() throws Exception {
         final FunctionApp app = getFunctionApp();
         if (app == null) {
             createFunctionApp();
@@ -72,7 +121,7 @@ public class DeployTask extends FunctionsTask {
         }
     }
 
-    protected void createFunctionApp() throws Exception {
+    private void createFunctionApp() throws Exception {
         getLogger().quiet(FUNCTION_APP_CREATE_START);
 
         final FunctionApp.DefinitionStages.NewAppServicePlanWithGroup newAppServicePlanWithGroup = defineApp(getAppName(), getRegion());
@@ -84,7 +133,7 @@ public class DeployTask extends FunctionsTask {
         getLogger().quiet(FUNCTION_APP_CREATED + getAppName());
     }
 
-    protected void updateFunctionApp(final FunctionApp app) {
+    private void updateFunctionApp(final FunctionApp app) {
         getLogger().quiet(FUNCTION_APP_UPDATE);
 
         // Work around of https://github.com/Azure/azure-sdk-for-java/issues/1755
@@ -128,7 +177,7 @@ public class DeployTask extends FunctionsTask {
     }
 
 
-    protected ArtifactHandler getArtifactHandler() {
+    private ArtifactHandler getArtifactHandler() {
         switch (getDeploymentType().toLowerCase(Locale.ENGLISH)) {
             case FTP:
                 return new FTPArtifactHandlerImpl(this);

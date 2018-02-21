@@ -6,23 +6,25 @@
 
 package com.microsoft.azure.gradle.functions.handlers;
 
+import com.microsoft.azure.gradle.functions.FunctionsTask;
+import com.microsoft.azure.gradle.functions.helpers.FTPUploader;
 import com.microsoft.azure.management.appservice.FunctionApp;
 import com.microsoft.azure.management.appservice.PublishingProfile;
 
 public class FTPArtifactHandlerImpl implements ArtifactHandler {
-    public static final String DEFAULT_FUNCTION_ROOT = "/site/wwwroot";
-    public static final int DEFAULT_MAX_RETRY_TIMES = 3;
+    private static final String DEFAULT_FUNCTION_ROOT = "/site/wwwroot";
+    private static final int DEFAULT_MAX_RETRY_TIMES = 3;
 
-    private AbstractFunctionMojo mojo;
+    private FunctionsTask functionsTask;
 
-    public FTPArtifactHandlerImpl(final AbstractFunctionMojo mojo) {
-        this.mojo = mojo;
+    public FTPArtifactHandlerImpl(final FunctionsTask functionsTask) {
+        this.functionsTask = functionsTask;
     }
 
     @Override
     public void publish() throws Exception {
         final FTPUploader uploader = getUploader();
-        final FunctionApp app = mojo.getFunctionApp();
+        final FunctionApp app = functionsTask.getFunctionApp();
         final PublishingProfile profile = app.getPublishingProfile();
         final String serverUrl = profile.ftpUrl().split("/", 2)[0];
 
@@ -30,7 +32,7 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
                 serverUrl,
                 profile.ftpUsername(),
                 profile.ftpPassword(),
-                mojo.getDeploymentStageDirectory(),
+                functionsTask.getDeploymentStageDirectory(),
                 DEFAULT_FUNCTION_ROOT,
                 DEFAULT_MAX_RETRY_TIMES);
 
@@ -38,6 +40,6 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
     }
 
     protected FTPUploader getUploader() {
-        return new FTPUploader(mojo.getLog());
+        return new FTPUploader(functionsTask.getLogger());
     }
 }
