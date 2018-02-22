@@ -43,7 +43,19 @@ azurefunctions {
     authFile = 'C:/stuff/my.azureauth'
 }
 
+task packageFunction(type: PackageTask) {
+    appName = "lenaFunctionApp"
+    resourceGroup = "lenaFunctionApp"
+    region = "westus"
+}
+
 task deploy(type: DeployTask) {
+    appName = "lenaFunctionApp"
+    resourceGroup = "lenaFunctionApp"
+    region = "westus"
+}
+
+task run(type: RunTask) {
     appName = "lenaFunctionApp"
     resourceGroup = "lenaFunctionApp"
     region = "westus"

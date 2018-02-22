@@ -130,7 +130,7 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
     public String getDeploymentStageDirectory() {
         return Paths.get(getBuildDirectoryAbsolutePath(),
                 AZURE_FUNCTIONS,
-                azureFunctionsExtension.getAppName()).toString();
+                getAppName()).toString();
     }
 
     public FunctionApp getFunctionApp() throws AzureAuthFailureException {
