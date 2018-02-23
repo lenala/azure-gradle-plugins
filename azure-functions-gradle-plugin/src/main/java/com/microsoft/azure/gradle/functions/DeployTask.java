@@ -97,7 +97,7 @@ public class DeployTask extends FunctionsTask {
 
             getArtifactHandler().publish();
 
-            getLogger().quiet(String.format(FUNCTION_DEPLOY_SUCCESS, azureFunctionsExtension.getAppName()));
+            getLogger().quiet(String.format(FUNCTION_DEPLOY_SUCCESS, getAppName()));
         } catch (Exception ex) {
             throw new TaskExecutionException(this, ex);
         }
