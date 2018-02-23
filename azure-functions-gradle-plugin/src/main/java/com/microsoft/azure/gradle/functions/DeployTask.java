@@ -134,7 +134,7 @@ public class DeployTask extends FunctionsTask {
         configureAppSettings(update::withAppSettings, getAppSettings());
         update.apply();
 
-        getLogger().quiet(FUNCTION_APP_UPDATE_DONE + azureFunctionsExtension.getAppName());
+        getLogger().quiet(FUNCTION_APP_UPDATE_DONE + getAppName());
     }
 
     private FunctionApp.DefinitionStages.NewAppServicePlanWithGroup defineApp(final String appName, final String region) throws Exception {
