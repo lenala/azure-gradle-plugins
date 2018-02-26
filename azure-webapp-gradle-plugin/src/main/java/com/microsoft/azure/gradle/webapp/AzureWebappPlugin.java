@@ -12,7 +12,7 @@ public class AzureWebappPlugin implements Plugin<Project> {
     public void apply(Project project) {
         AzureWebAppExtension azureWebAppExtension = new AzureWebAppExtension(project);
         project.getExtensions().add("azurewebapp", azureWebAppExtension);
-        project.getTasks().create("deploy", DeployTask.class, (task) -> {
+        project.getTasks().create("azureWebappDeploy", DeployTask.class, (task) -> {
             task.setAzureWebAppExtension(azureWebAppExtension);
         });
     }

@@ -49,7 +49,7 @@ task packageFunction(type: PackageTask) {
     region = "westus"
 }
 
-task deploy(type: DeployTask) {
+task azureFunctionsDeploy(type: DeployTask) {
     appName = "lenaFunctionApp"
     resourceGroup = "lenaFunctionApp"
     region = "westus"

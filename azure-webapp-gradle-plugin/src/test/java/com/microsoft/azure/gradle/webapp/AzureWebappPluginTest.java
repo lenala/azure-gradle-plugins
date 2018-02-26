@@ -17,6 +17,6 @@ public class AzureWebappPluginTest {
         Project project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("com.microsoft.azure.azurewebapp");
 
-        assertTrue(project.getTasks().findByPath("deploy") instanceof DeployTask);
+        assertTrue(project.getTasks().findByPath("azureWebappDeploy") instanceof DeployTask);
     }
 }
