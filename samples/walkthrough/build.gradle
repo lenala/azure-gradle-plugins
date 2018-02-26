@@ -61,6 +61,11 @@ task run(type: RunTask) {
     region = "westus"
 }
 
+task add(type: AddTask) {
+    functionPackageName = "my.function"
+    functionTemplate = "HttpTrigger"
+}
+
 repositories {
      maven { url "http://repo.maven.apache.org/maven2" }
 }

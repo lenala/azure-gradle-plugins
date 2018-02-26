@@ -7,11 +7,11 @@ package com.microsoft.azure.gradle.functions;
 
 import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
 import com.microsoft.azure.management.Azure;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.gradle.internal.impldep.org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
 import java.io.InputStream;
@@ -175,7 +175,7 @@ public class RunTask  extends FunctionsTask {
 
     private void showErrorIfAny(final InputStream inputStream) throws Exception {
         if (inputStream != null) {
-            final String input = IOUtil.toString(inputStream);
+            final String input = IOUtils.toString(inputStream);
             getLogger().quiet(StringUtils.strip(input, "\n")); // error?
         }
     }

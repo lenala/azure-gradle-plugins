@@ -7,10 +7,10 @@ package com.microsoft.azure.gradle.functions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.gradle.functions.template.FunctionTemplate;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.gradle.internal.impldep.org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static javax.lang.model.SourceVersion.isName;
-import static org.gradle.internal.impldep.org.codehaus.plexus.util.IOUtil.copy;
-import static org.gradle.internal.impldep.org.codehaus.plexus.util.StringUtils.isNotEmpty;
+import static org.apache.commons.io.CopyUtils.copy;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class AddTask extends FunctionsTask {
     private static final String LOAD_TEMPLATES = "Step 1 of 4: Load all function templates";
@@ -49,24 +49,24 @@ public class AddTask extends FunctionsTask {
     private static final String FILE_EXIST = "Function already exists at %s. Please specify a different function name.";
     private static final String FUNCTION_NAME_REGEXP = "^[a-zA-Z][a-zA-Z\\d_\\-]*$";
 
-    protected File basedir;
+    private File basedir;
 
-    protected List<String> compileSourceRoots;
+    private List<String> compileSourceRoots;
 
     /**
      * Package name of the new function.
      */
-    protected String functionPackageName;
+    private String functionPackageName;
 
     /**
      * Name of the new function.
      */
-    protected String functionName;
+    private String functionName;
 
     /**
      * Template for the new function
      */
-    protected String functionTemplate;
+    private String functionTemplate;
 
     public String getFunctionPackageName() {
         return functionPackageName;
@@ -85,7 +85,14 @@ public class AddTask extends FunctionsTask {
     }
 
     protected String getBasedir() {
+        if (basedir == null) {
+            basedir = getProject().getProjectDir();
+        }
         return basedir.getAbsolutePath();
+    }
+
+    public void setBasedir(File basedir) {
+        this.basedir = basedir;
     }
 
     protected String getSourceRoot() {
@@ -98,11 +105,11 @@ public class AddTask extends FunctionsTask {
         this.functionPackageName = StringUtils.lowerCase(functionPackageName);
     }
 
-    protected void setFunctionName(String functionName) {
+    public void setFunctionName(String functionName) {
         this.functionName = StringUtils.capitalize(functionName);
     }
 
-    protected void setFunctionTemplate(String functionTemplate) {
+    public void setFunctionTemplate(String functionTemplate) {
         this.functionTemplate = functionTemplate;
     }
 
@@ -128,7 +135,7 @@ public class AddTask extends FunctionsTask {
         getLogger().quiet(LOAD_TEMPLATES);
 
         try (final InputStream is = AddTask.class.getResourceAsStream("/templates.json")) {
-            final String templatesJsonStr = IOUtil.toString(is);
+            final String templatesJsonStr = IOUtils.toString(is);
             final List<FunctionTemplate> templates = parseTemplateJson(templatesJsonStr);
             getLogger().quiet(LOAD_TEMPLATES_DONE);
             return templates;
@@ -287,10 +294,6 @@ public class AddTask extends FunctionsTask {
                 .forEach(e -> getLogger().quiet(format("%s: %s", e.getKey(), e.getValue())));
     }
 
-    //endregion
-
-    //region Substitute parameters
-
     private String substituteParametersInTemplate(final FunctionTemplate template, final Map<String, String> params) {
         String ret = template.getFiles().get("function.java");
         for (final Map.Entry<String, String> entry : params.entrySet()) {
@@ -298,10 +301,6 @@ public class AddTask extends FunctionsTask {
         }
         return ret;
     }
-
-    //endregion
-
-    //region Save function to file
 
     private void saveNewFunctionToFile(final String newFunctionClass) throws Exception {
         getLogger().quiet(SAVE_FILE);
