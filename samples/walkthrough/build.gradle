@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
         jcenter()
         maven {
-            url uri('C:/Users/elenla.REDMOND/.m2/repository')
+            url uri('/Users/farlen/.m2/repository')
         }
     }
     dependencies {
@@ -30,6 +30,8 @@ version = 'v0.15'
 
 description = "walkthrough-functions-app"
 
+def functionAppName = "lenaFunctionApp1122"
+
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
@@ -40,24 +42,24 @@ tasks.withType(JavaCompile) {
 //}
 
 azurefunctions {
-    authFile = 'C:/stuff/my.azureauth'
+    authFile = '/Users/farlen/stuff/my.azureauth'
 }
 
 task packageFunction(type: PackageTask) {
     dependsOn jar
-    appName = "lenaFunctionApp"
+    appName = functionAppName
     resourceGroup = "lenaFunctionApp"
     region = "westus"
 }
 
 task azureFunctionsDeploy(type: DeployTask) {
-    appName = "lenaFunctionApp"
+    appName = functionAppName
     resourceGroup = "lenaFunctionApp"
     region = "westus"
 }
 
 task run(type: RunTask) {
-    appName = "lenaFunctionApp"
+    appName = functionAppName
     resourceGroup = "lenaFunctionApp"
     region = "westus"
 }
