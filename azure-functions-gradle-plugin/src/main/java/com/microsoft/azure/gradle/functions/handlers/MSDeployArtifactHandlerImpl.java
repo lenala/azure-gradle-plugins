@@ -23,7 +23,7 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
     private static final String ZIP_EXT = ".zip";
     private static final String CREATE_ZIP_START = "Step 1 of 4: Creating ZIP package...";
     private static final String CREATE_ZIP_DONE = "Successfully saved ZIP package at ";
-    private static final String STAGE_DIR_NOT_FOUND = "Function App stage directory not found. " +
+    private static final String STAGE_DIR_NOT_FOUND = "Function App stage directory '%s' not found. " +
             "Please run 'mvn package azure-functions:package' first.";
     private static final String LOCAL_SETTINGS_FILE = "local.settings.json";
     private static final String REMOVE_LOCAL_SETTINGS = "Remove local.settings.json from ZIP package.";
@@ -49,6 +49,8 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
         final File zipPackage = createZipPackage();
 
         final FunctionApp app = functionsTask.getFunctionApp();
+
+        functionsTask.getLogger().quiet("FunctionApp " + app);
 
         final CloudStorageAccount storageAccount = getCloudStorageAccount(app);
 
@@ -86,6 +88,7 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
         final File zipPackage = new File(stageDirectoryPath.concat(ZIP_EXT));
 
         if (!stageDirectory.exists()) {
+            String errorMessage = String.format(STAGE_DIR_NOT_FOUND, stageDirectoryPath);
             logError(STAGE_DIR_NOT_FOUND);
             throw new Exception(STAGE_DIR_NOT_FOUND);
         }

@@ -89,7 +89,7 @@ public class DeployTask extends FunctionsTask {
 
 
     @TaskAction
-    void packageFunction() {
+    void deployFunction() {
         try {
             getLogger().quiet(FUNCTION_DEPLOY_START + getAppName() + "...");
 

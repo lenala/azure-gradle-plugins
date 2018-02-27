@@ -44,9 +44,19 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
 
     private String outputDirectory;
 
+    private String finalName;
+
+    private Map<String, String> appSettings;
+
     public String getFinalName() {
-        return "finalName";
-//        return finalName;
+        if (finalName == null) {
+            finalName = getProject().getTasks().getByPath("jar").property("archiveName").toString().replace(".jar", "");
+        }
+        return finalName;
+    }
+
+    public void setFinalName(String finalName) {
+        this.finalName = finalName;
     }
 
     public String getResourceGroup() {
@@ -74,7 +84,11 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
     }
 
     public Map getAppSettings() {
-        return new HashMap();//appSettings;
+        if (appSettings == null) {
+            appSettings = new HashMap<>();
+            appSettings.put("FUNCTIONS_EXTENSION_VERSION", "beta");
+        }
+        return appSettings;
     }
 
     public String getOutputDirectory() {
