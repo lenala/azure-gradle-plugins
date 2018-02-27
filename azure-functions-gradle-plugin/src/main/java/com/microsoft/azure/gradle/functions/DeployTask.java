@@ -5,41 +5,32 @@
  */
 package com.microsoft.azure.gradle.functions;
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.microsoft.azure.gradle.functions.auth.AuthConfiguration;
-import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
-import com.microsoft.azure.gradle.functions.configuration.FunctionConfiguration;
-import com.microsoft.azure.gradle.functions.handlers.AnnotationHandler;
 import com.microsoft.azure.gradle.functions.handlers.ArtifactHandler;
 import com.microsoft.azure.gradle.functions.handlers.FTPArtifactHandlerImpl;
 import com.microsoft.azure.gradle.functions.handlers.MSDeployArtifactHandlerImpl;
 import com.microsoft.azure.gradle.functions.model.PricingTierEnum;
-import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.appservice.FunctionApp;
 import com.microsoft.azure.management.appservice.PricingTier;
 import org.apache.commons.lang3.StringUtils;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
-import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class DeployTask extends FunctionsTask {
-    public static final String FUNCTION_DEPLOY_START = "Starting deploying to Function App ";
-    public static final String FUNCTION_DEPLOY_SUCCESS =
+    private static final String FUNCTION_DEPLOY_START = "Starting deploying to Function App ";
+    private static final String FUNCTION_DEPLOY_SUCCESS =
             "Successfully deployed Function App at https://%s.azurewebsites.net";
-    public static final String FUNCTION_APP_CREATE_START = "Target Function App does not exist. " +
+    private static final String FUNCTION_APP_CREATE_START = "Target Function App does not exist. " +
             "Creating a new Function App ...";
-    public static final String FUNCTION_APP_CREATED = "Successfully created Function App ";
-    public static final String FUNCTION_APP_UPDATE = "Updating Function App...";
-    public static final String FUNCTION_APP_UPDATE_DONE = "Successfully updated Function App ";
+    private static final String FUNCTION_APP_CREATED = "Successfully created Function App ";
+    private static final String FUNCTION_APP_UPDATE = "Updating Function App...";
+    private static final String FUNCTION_APP_UPDATE_DONE = "Successfully updated Function App ";
 
-    public static final String MS_DEPLOY = "msdeploy";
-    public static final String FTP = "ftp";
+    private static final String MS_DEPLOY = "msdeploy";
+    private static final String FTP = "ftp";
 
     /**
      * Function App pricing tier, which will only be used to create Function App at the first time.<br/>
@@ -58,7 +49,7 @@ public class DeployTask extends FunctionsTask {
      * <li>P3</li>
      * </ul>
      */
-    protected PricingTierEnum pricingTier;
+    private PricingTierEnum pricingTier;
 
     /**
      * Deployment type to deploy Web App. Supported values:
@@ -69,7 +60,7 @@ public class DeployTask extends FunctionsTask {
      *
      * @since 0.1.0
      */
-    protected String deploymentType;
+    private String deploymentType;
 
     public void setPricingTier(PricingTierEnum pricingTier) {
         this.pricingTier = pricingTier;
@@ -167,7 +158,6 @@ public class DeployTask extends FunctionsTask {
         }
     }
 
-
     private ArtifactHandler getArtifactHandler() {
         switch (getDeploymentType().toLowerCase(Locale.ENGLISH)) {
             case FTP:
@@ -177,8 +167,4 @@ public class DeployTask extends FunctionsTask {
                 return new MSDeployArtifactHandlerImpl(this);
         }
     }
-
-
-
-
 }
