@@ -62,6 +62,8 @@ public class PackageTask extends FunctionsTask {
 
             writeEmptyHostJsonFile(objectWriter);
 
+            copyLocalSettingsJson();
+
             writeFunctionJsonFiles(objectWriter, configMap);
 
             copyJarsToStageDirectory();
@@ -186,14 +188,12 @@ public class PackageTask extends FunctionsTask {
         getLogger().quiet(COPY_SUCCESS);
     }
 
-    public FunctionApp getFunctionApp() throws AzureAuthFailureException {
-        try {
-            return getAzureClient().appServices().functionApps().getByResourceGroup(azureFunctionsExtension.getResourceGroup(), azureFunctionsExtension.getAppName());
-        } catch (AzureAuthFailureException authEx) {
-            throw authEx;
-        } catch (Exception ex) {
-            // Swallow exception for non-existing function app
-        }
-        return null;
+    private void copyLocalSettingsJson() throws IOException {
+        final String stagingDirectory = getDeploymentStageDirectory();
+        getLogger().quiet("Copying local.settings.json...");
+        FileUtils.copyFileToDirectory(new File(getProject().getProjectDir().getAbsolutePath() + "/local.settings.json"), new File(getDeploymentStageDirectory()));
+
+        getLogger().quiet(COPY_SUCCESS);
+
     }
 }
