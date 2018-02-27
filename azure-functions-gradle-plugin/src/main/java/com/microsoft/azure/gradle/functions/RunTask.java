@@ -21,27 +21,19 @@ import java.util.List;
 import static java.lang.String.format;
 
 public class RunTask  extends FunctionsTask {
-    public static final String STAGE_DIR_FOUND = "Azure Functions stage directory found at: ";
-    public static final String STAGE_DIR_NOT_FOUND =
+    private static final String STAGE_DIR_FOUND = "Azure Functions stage directory found at: ";
+    private static final String STAGE_DIR_NOT_FOUND =
             "Stage directory not found. Please run mvn:package or azure-functions:package first.";
-    public static final String RUNTIME_FOUND = "Azure Functions Core Tools found.";
-    public static final String RUNTIME_NOT_FOUND = "Azure Functions Core Tools not found. " +
+    private static final String RUNTIME_FOUND = "Azure Functions Core Tools found.";
+    private static final String RUNTIME_NOT_FOUND = "Azure Functions Core Tools not found. " +
             "Please run 'npm i -g azure-functions-core-tools@core' to install Azure Functions Core Tools first.";
-    public static final String RUN_FUNCTIONS_FAILURE = "Failed to run Azure Functions. Please checkout console output.";
-    public static final String START_RUN_FUNCTIONS = "Starting running Azure Functions...";
+    private static final String RUN_FUNCTIONS_FAILURE = "Failed to run Azure Functions. Please checkout console output.";
+    private static final String START_RUN_FUNCTIONS = "Starting running Azure Functions...";
 
-    public static final String WINDOWS_FUNCTION_RUN = "cd /D %s && func function run %s --no-interactive";
-    public static final String LINUX_FUNCTION_RUN = "cd %s; func function run %s --no-interactive";
-    public static final String WINDOWS_HOST_START = "cd /D %s && func host start";
-    public static final String LINUX_HOST_START = "cd %s; func host start";
-    private Azure azure;
-    private AzureFunctionsExtension azureFunctionsExtension;
-    private AzureAuthHelper azureAuthHelper;
-
-    public void setAzureFunctionsExtension(AzureFunctionsExtension azureFunctionsExtension) {
-        this.azureFunctionsExtension = azureFunctionsExtension;
-        azureAuthHelper = new AzureAuthHelper(this);
-    }
+    private static final String WINDOWS_FUNCTION_RUN = "cd /D %s && func function run %s --no-interactive";
+    private static final String LINUX_FUNCTION_RUN = "cd %s; func function run %s --no-interactive";
+    private static final String WINDOWS_HOST_START = "cd /D %s && func host start";
+    private static final String LINUX_HOST_START = "cd %s; func host start";
 
     public String getTargetFunction() {
         return "";//targetFunction;

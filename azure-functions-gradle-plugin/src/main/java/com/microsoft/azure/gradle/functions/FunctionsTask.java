@@ -30,17 +30,19 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
     /**
      * Resource group of Function App. It will be created if it doesn't exist.
      */
-    protected String resourceGroup;
+    private String resourceGroup;
 
     /**
      * Function App name. It will be created if it doesn't exist.
      */
-    protected String appName;
+    private String appName;
 
     /**
      * Function App region, which will only be used to create Function App at the first time.
      */
-    protected String region= "westus2";
+    private String region= "westus2";
+
+    private String outputDirectory;
 
     public String getFinalName() {
         return "finalName";
@@ -73,6 +75,17 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
 
     public Map getAppSettings() {
         return new HashMap();//appSettings;
+    }
+
+    public String getOutputDirectory() {
+        if (outputDirectory == null) {
+            outputDirectory = getProject().getBuildDir().getAbsolutePath() + "/classes/main";
+        }
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
     FunctionsTask() {

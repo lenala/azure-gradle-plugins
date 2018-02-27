@@ -9,11 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.microsoft.azure.gradle.functions.auth.AzureAuthFailureException;
-import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
 import com.microsoft.azure.gradle.functions.configuration.FunctionConfiguration;
 import com.microsoft.azure.gradle.functions.handlers.AnnotationHandler;
 import com.microsoft.azure.gradle.functions.handlers.AnnotationHandlerImpl;
 import com.microsoft.azure.management.appservice.FunctionApp;
+import org.apache.commons.io.FileUtils;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
@@ -77,7 +77,7 @@ public class PackageTask extends FunctionsTask {
     }
 
     protected Set<Method> findAnnotatedMethods(final AnnotationHandler handler) throws Exception {
-        getLogger().quiet("SEARCH_FUNCTIONS");
+        getLogger().quiet(SEARCH_FUNCTIONS);
         Set<Method> functions;
         try {
             getLogger().quiet("ClassPath to resolve: " + getTargetClassUrl());
@@ -98,9 +98,7 @@ public class PackageTask extends FunctionsTask {
     }
 
     protected URL getTargetClassUrl() throws Exception {
-        return getProject().getBuildDir().toURI().toURL();
-//        return new URL(getProject().getBuildDir().getAbsolutePath() + "/classes");
-//        return outputDirectory.toURI().toURL();
+        return new File(getOutputDirectory()).toURI().toURL();
     }
 
     protected Map<String, FunctionConfiguration> getFunctionConfigurations(final AnnotationHandler handler,
@@ -137,8 +135,8 @@ public class PackageTask extends FunctionsTask {
         }
     }
 
-    protected void writeFunctionJsonFiles(final ObjectWriter objectWriter,
-                                          final Map<String, FunctionConfiguration> configMap) throws IOException {
+    private void writeFunctionJsonFiles(final ObjectWriter objectWriter,
+                                        final Map<String, FunctionConfiguration> configMap) throws IOException {
         getLogger().quiet(SAVE_FUNCTION_JSONS);
         if (configMap.size() == 0) {
             getLogger().quiet(SAVE_SKIP);
@@ -149,51 +147,43 @@ public class PackageTask extends FunctionsTask {
         }
     }
 
-    protected void writeFunctionJsonFile(final ObjectWriter objectWriter, final String functionName,
-                                         final FunctionConfiguration config) throws IOException {
+    private void writeFunctionJsonFile(final ObjectWriter objectWriter, final String functionName,
+                                       final FunctionConfiguration config) throws IOException {
         getLogger().quiet(SAVE_FUNCTION_JSON + functionName);
         final File functionJsonFile = Paths.get(getDeploymentStageDirectory(), functionName, FUNCTION_JSON).toFile();
         writeObjectToFile(objectWriter, config, functionJsonFile);
         getLogger().quiet(SAVE_SUCCESS + functionJsonFile.getAbsolutePath());
     }
 
-    protected void writeEmptyHostJsonFile(final ObjectWriter objectWriter) throws IOException {
+    private void writeEmptyHostJsonFile(final ObjectWriter objectWriter) throws IOException {
         getLogger().quiet(SAVE_HOST_JSON);
         final File hostJsonFile = Paths.get(getDeploymentStageDirectory(), HOST_JSON).toFile();
         writeObjectToFile(objectWriter, new Object(), hostJsonFile);
         getLogger().quiet(SAVE_SUCCESS + hostJsonFile.getAbsolutePath());
     }
 
-    protected void writeObjectToFile(final ObjectWriter objectWriter, final Object object, final File targetFile)
+    private void writeObjectToFile(final ObjectWriter objectWriter, final Object object, final File targetFile)
             throws IOException {
         targetFile.getParentFile().mkdirs();
         targetFile.createNewFile();
         objectWriter.writeValue(targetFile, object);
     }
 
-    protected ObjectWriter getObjectWriter() {
+    private ObjectWriter getObjectWriter() {
         return new ObjectMapper()
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                 .writerWithDefaultPrettyPrinter();
     }
 
 
-    protected void copyJarsToStageDirectory() throws IOException {
+    private void copyJarsToStageDirectory() throws IOException {
         final String stagingDirectory = getDeploymentStageDirectory();
         getLogger().quiet(COPY_JARS + stagingDirectory);
-//        Utils.copyResources(
-//                getProject(),
-//                getSession(),
-//                getMavenResourcesFiltering(),
-//                getResources(),
-//                stagingDirectory);
+        String jarName = getProject().getTasks().getByPath("jar").getOutputs().getFiles().getAsPath();
+        getLogger().quiet(jarName);
+        FileUtils.copyFileToDirectory(new File(jarName), new File(getDeploymentStageDirectory()));
+
         getLogger().quiet(COPY_SUCCESS);
-    }
-
-
-    public void setAzureFunctionsExtension(AzureFunctionsExtension azureFunctionsExtension) {
-        this.azureFunctionsExtension = azureFunctionsExtension;
-        azureAuthHelper = new AzureAuthHelper(this);
     }
 
     public FunctionApp getFunctionApp() throws AzureAuthFailureException {

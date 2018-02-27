@@ -34,16 +34,17 @@ tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
 
-jar {
-    baseName = "walkthrough"
-//    manifest { attributes "Main-Class": "com.microsoft.azure.sample.TodoApplication" }
-}
+//jar {
+//    baseName = "walkthrough"
+////    manifest { attributes "Main-Class": "com.microsoft.azure.sample.TodoApplication" }
+//}
 
 azurefunctions {
     authFile = 'C:/stuff/my.azureauth'
 }
 
 task packageFunction(type: PackageTask) {
+    dependsOn jar
     appName = "lenaFunctionApp"
     resourceGroup = "lenaFunctionApp"
     region = "westus"
