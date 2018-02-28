@@ -21,7 +21,7 @@ import static java.lang.String.format;
 public class RunTask  extends FunctionsTask {
     private static final String STAGE_DIR_FOUND = "Azure Functions stage directory found at: ";
     private static final String STAGE_DIR_NOT_FOUND =
-            "Stage directory not found. Please run mvn:package or azure-functions:package first.";
+            "Stage directory not found. Please run package task first.";
     private static final String RUNTIME_FOUND = "Azure Functions Core Tools found.";
     private static final String RUNTIME_NOT_FOUND = "Azure Functions Core Tools not found. " +
             "Please run 'npm i -g azure-functions-core-tools@core' to install Azure Functions Core Tools first.";

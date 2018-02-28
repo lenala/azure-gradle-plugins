@@ -24,7 +24,7 @@ public class MSDeployArtifactHandlerImpl implements ArtifactHandler {
     private static final String CREATE_ZIP_START = "Step 1 of 4: Creating ZIP package...";
     private static final String CREATE_ZIP_DONE = "Successfully saved ZIP package at ";
     private static final String STAGE_DIR_NOT_FOUND = "Function App stage directory '%s' not found. " +
-            "Please run 'mvn package azure-functions:package' first.";
+            "Please run package task first.";
     private static final String LOCAL_SETTINGS_FILE = "local.settings.json";
     private static final String REMOVE_LOCAL_SETTINGS = "Remove local.settings.json from ZIP package.";
     private static final String INTERNAL_STORAGE_KEY = "AzureWebJobsStorage";

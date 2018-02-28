@@ -10,6 +10,6 @@ public class Http {
     @FunctionName("hello")
     public String hello(@HttpTrigger(name = "req", methods = {"post"}, authLevel = AuthorizationLevel.ANONYMOUS) String req,
                         ExecutionContext context) {
-        return String.format("Hello, %s!", req);
+        return String.format("Hello, %s!\n", req);
     }
 }
