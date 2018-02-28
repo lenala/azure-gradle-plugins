@@ -8,11 +8,9 @@ package com.microsoft.azure.gradle.functions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.microsoft.azure.gradle.functions.auth.AzureAuthFailureException;
 import com.microsoft.azure.gradle.functions.configuration.FunctionConfiguration;
 import com.microsoft.azure.gradle.functions.handlers.AnnotationHandler;
 import com.microsoft.azure.gradle.functions.handlers.AnnotationHandlerImpl;
-import com.microsoft.azure.management.appservice.FunctionApp;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
@@ -27,25 +25,25 @@ import java.util.Set;
 
 
 public class PackageTask extends FunctionsTask {
-    public static final String SEARCH_FUNCTIONS = "Step 1 of 6: Searching for Azure Function entry points";
-    public static final String FOUND_FUNCTIONS = " Azure Function entry point(s) found.";
-    public static final String GENERATE_CONFIG = "Step 2 of 6: Generating Azure Function configurations";
-    public static final String GENERATE_SKIP = "No Azure Functions found. Skip configuration generation.";
-    public static final String GENERATE_DONE = "Generation done.";
-    public static final String VALIDATE_CONFIG = "Step 3 of 6: Validating generated configurations";
-    public static final String VALIDATE_SKIP = "No configurations found. Skip validation.";
-    public static final String VALIDATE_DONE = "Validation done.";
-    public static final String SAVE_HOST_JSON = "Step 4 of 6: Saving empty host.json";
-    public static final String SAVE_FUNCTION_JSONS = "Step 5 of 6: Saving configurations to function.json";
-    public static final String SAVE_SKIP = "No configurations found. Skip save.";
-    public static final String SAVE_FUNCTION_JSON = "Starting processing function: ";
-    public static final String SAVE_SUCCESS = "Successfully saved to ";
-    public static final String COPY_JARS = "Step 6 of 6: Copying JARs to staging directory ";
-    public static final String COPY_SUCCESS = "Copied successfully.";
-    public static final String BUILD_SUCCESS = "Successfully built Azure Functions.";
+    private static final String SEARCH_FUNCTIONS = "Step 1 of 6: Searching for Azure Function entry points";
+    private static final String FOUND_FUNCTIONS = " Azure Function entry point(s) found.";
+    private static final String GENERATE_CONFIG = "Step 2 of 6: Generating Azure Function configurations";
+    private static final String GENERATE_SKIP = "No Azure Functions found. Skip configuration generation.";
+    private static final String GENERATE_DONE = "Generation done.";
+    private static final String VALIDATE_CONFIG = "Step 3 of 6: Validating generated configurations";
+    private static final String VALIDATE_SKIP = "No configurations found. Skip validation.";
+    private static final String VALIDATE_DONE = "Validation done.";
+    private static final String SAVE_HOST_JSON = "Step 4 of 6: Saving empty host.json";
+    private static final String SAVE_FUNCTION_JSONS = "Step 5 of 6: Saving configurations to function.json";
+    private static final String SAVE_SKIP = "No configurations found. Skip save.";
+    private static final String SAVE_FUNCTION_JSON = "Starting processing function: ";
+    private static final String SAVE_SUCCESS = "Successfully saved to ";
+    private static final String COPY_JARS = "Step 6 of 6: Copying JARs to staging directory ";
+    private static final String COPY_SUCCESS = "Copied successfully.";
+    private static final String BUILD_SUCCESS = "Successfully built Azure Functions.";
 
-    public static final String FUNCTION_JSON = "function.json";
-    public static final String HOST_JSON = "host.json";
+    private static final String FUNCTION_JSON = "function.json";
+    private static final String HOST_JSON = "host.json";
 
     @TaskAction
     void packageFunction() {
@@ -74,11 +72,11 @@ public class PackageTask extends FunctionsTask {
         }
     }
 
-    protected AnnotationHandler getAnnotationHandler() throws Exception {
-        return new AnnotationHandlerImpl(/*getLog()*/);
+    private AnnotationHandler getAnnotationHandler() throws Exception {
+        return new AnnotationHandlerImpl(getLogger());
     }
 
-    protected Set<Method> findAnnotatedMethods(final AnnotationHandler handler) throws Exception {
+    private Set<Method> findAnnotatedMethods(final AnnotationHandler handler) throws Exception {
         getLogger().quiet(SEARCH_FUNCTIONS);
         Set<Method> functions;
         try {
@@ -93,18 +91,18 @@ public class PackageTask extends FunctionsTask {
         return functions;
     }
 
-    protected URL getArtifactUrl() throws Exception {
+    private URL getArtifactUrl() throws Exception {
         return null;
 //        return this.getProject().Artifact().getFile().toURI().toURL();
         //        return this.getProject().getArtifact().getFile().toURI().toURL();
     }
 
-    protected URL getTargetClassUrl() throws Exception {
+    private URL getTargetClassUrl() throws Exception {
         return new File(getOutputDirectory()).toURI().toURL();
     }
 
-    protected Map<String, FunctionConfiguration> getFunctionConfigurations(final AnnotationHandler handler,
-                                                                           final Set<Method> methods) throws Exception {
+    private Map<String, FunctionConfiguration> getFunctionConfigurations(final AnnotationHandler handler,
+                                                                         final Set<Method> methods) throws Exception {
         getLogger().quiet(GENERATE_CONFIG);
         final Map<String, FunctionConfiguration> configMap = handler.generateConfigurations(methods);
         if (configMap.size() == 0) {
@@ -118,7 +116,7 @@ public class PackageTask extends FunctionsTask {
         return configMap;
     }
 
-    protected String getScriptFilePath() {
+    private String getScriptFilePath() {
         return new StringBuilder()
                 .append("..")
                 .append(File.separator)
@@ -127,7 +125,7 @@ public class PackageTask extends FunctionsTask {
                 .toString();
     }
 
-    protected void validateFunctionConfigurations(final Map<String, FunctionConfiguration> configMap) {
+    private void validateFunctionConfigurations(final Map<String, FunctionConfiguration> configMap) {
         getLogger().quiet(VALIDATE_CONFIG);
         if (configMap.size() == 0) {
             getLogger().quiet(VALIDATE_SKIP);

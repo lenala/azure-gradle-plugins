@@ -35,8 +35,8 @@ public class AzureStorageHelper {
         }
     }
 
-    protected static CloudBlobContainer getBlobContainer(final CloudStorageAccount storageAccount,
-                                                         final String containerName) throws Exception {
+    private static CloudBlobContainer getBlobContainer(final CloudStorageAccount storageAccount,
+                                                       final String containerName) throws Exception {
         final CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
         return blobClient.getContainerReference(containerName);
     }

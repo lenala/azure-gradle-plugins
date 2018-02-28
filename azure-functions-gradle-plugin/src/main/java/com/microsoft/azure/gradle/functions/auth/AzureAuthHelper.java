@@ -26,29 +26,29 @@ import java.util.Locale;
  */
 public class AzureAuthHelper {
     public static final String CLIENT_ID = "client";
-    public static final String TENANT_ID = "tenant";
-    public static final String KEY = "key";
-    public static final String CERTIFICATE = "certificate";
-    public static final String CERTIFICATE_PASSWORD = "certificatePassword";
-    public static final String ENVIRONMENT = "environment";
+    private static final String TENANT_ID = "tenant";
+    private static final String KEY = "key";
+    private static final String CERTIFICATE = "certificate";
+    private static final String CERTIFICATE_PASSWORD = "certificatePassword";
+    private static final String ENVIRONMENT = "environment";
 
-    public static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
-    public static final String AUTH_WITH_FILE = "Authenticate with file: ";
-    public static final String AUTH_WITH_AZURE_CLI = "Authenticate with Azure CLI 2.0";
-    public static final String USE_KEY_TO_AUTH = "Use key to get Azure authentication token: ";
-    public static final String USE_CERTIFICATE_TO_AUTH = "Use certificate to get Azure authentication token.";
+    private static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
+    private static final String AUTH_WITH_FILE = "Authenticate with file: ";
+    private static final String AUTH_WITH_AZURE_CLI = "Authenticate with Azure CLI 2.0";
+    private static final String USE_KEY_TO_AUTH = "Use key to get Azure authentication token: ";
+    private static final String USE_CERTIFICATE_TO_AUTH = "Use certificate to get Azure authentication token.";
 
-    public static final String CLIENT_ID_NOT_CONFIG = "Client Id of your service principal is not configured.";
-    public static final String TENANT_ID_NOT_CONFIG = "Tenant Id of your service principal is not configured.";
-    public static final String KEY_NOT_CONFIG = "Key of your service principal is not configured.";
-    public static final String CERTIFICATE_FILE_NOT_CONFIG = "Certificate of your service principal is not configured.";
-    public static final String CERTIFICATE_FILE_READ_FAIL = "Failed to read certificate file: ";
-    public static final String AUTH_FILE_NOT_CONFIG = "Authentication file is not configured.";
-    public static final String AUTH_FILE_NOT_EXIST = "Authentication file does not exist: ";
-    public static final String AUTH_FILE_READ_FAIL = "Failed to read authentication file: ";
-    public static final String AZURE_CLI_AUTH_FAIL = "Failed to authenticate with Azure CLI 2.0";
+    private static final String CLIENT_ID_NOT_CONFIG = "Client Id of your service principal is not configured.";
+    private static final String TENANT_ID_NOT_CONFIG = "Tenant Id of your service principal is not configured.";
+    private static final String KEY_NOT_CONFIG = "Key of your service principal is not configured.";
+    private static final String CERTIFICATE_FILE_NOT_CONFIG = "Certificate of your service principal is not configured.";
+    private static final String CERTIFICATE_FILE_READ_FAIL = "Failed to read certificate file: ";
+    private static final String AUTH_FILE_NOT_CONFIG = "Authentication file is not configured.";
+    private static final String AUTH_FILE_NOT_EXIST = "Authentication file does not exist: ";
+    private static final String AUTH_FILE_READ_FAIL = "Failed to read authentication file: ";
+    private static final String AZURE_CLI_AUTH_FAIL = "Failed to authenticate with Azure CLI 2.0";
 
-    protected AuthConfiguration config;
+    private AuthConfiguration config;
     private Logger logger = Logging.getLogger(AzureAuthHelper.class);
 
     /**
@@ -79,19 +79,19 @@ public class AzureAuthHelper {
         return null;
     }
 
-    protected LogLevel getLogLevel() {
+    private LogLevel getLogLevel() {
         return logger.isDebugEnabled() ?
                 LogLevel.BODY_AND_HEADERS :
                 LogLevel.NONE;
     }
 
-    protected Azure.Configurable azureConfigure() {
+    private Azure.Configurable azureConfigure() {
         return Azure.configure()
                 .withLogLevel(getLogLevel())
                 .withUserAgent(config.getUserAgent());
     }
 
-    protected AzureEnvironment getAzureEnvironment(String environment) {
+    private AzureEnvironment getAzureEnvironment(String environment) {
         if (StringUtils.isEmpty(environment)) {
             return AzureEnvironment.AZURE;
         }
@@ -108,7 +108,7 @@ public class AzureAuthHelper {
         }
     }
 
-    protected Authenticated getAuthObj() {
+    private Authenticated getAuthObj() {
         Authenticated auth;
         // check if project has Azure authentication settings in build.gradle or gradle.properties
         boolean hasAuthSetting = config.hasAuthenticationSettings();
@@ -128,7 +128,7 @@ public class AzureAuthHelper {
      *
      * @return Authenticated object if configurations are correct; otherwise return null.
      */
-    protected Authenticated getAuthObjFromConfiguration(final AuthConfiguration config) {
+    private Authenticated getAuthObjFromConfiguration(final AuthConfiguration config) {
         final ApplicationTokenCredentials credential = getAppTokenCredentials();
         if (credential == null) {
             return null;
@@ -147,7 +147,7 @@ public class AzureAuthHelper {
      * @param authFile Authentication file object.
      * @return Authenticated object of file is valid; otherwise return null.
      */
-    protected Authenticated getAuthObjFromFile(final File authFile) {
+    private Authenticated getAuthObjFromFile(final File authFile) {
         if (authFile == null) {
             logger.debug(AUTH_FILE_NOT_CONFIG);
             return null;
@@ -175,7 +175,7 @@ public class AzureAuthHelper {
      *
      * @return Authenticated object if Azure CLI 2.0 is logged in correctly; otherwise return null.
      */
-    protected Authenticated getAuthObjFromAzureCli() {
+    private Authenticated getAuthObjFromAzureCli() {
         try {
             final Authenticated auth = azureConfigure().authenticate(AzureCliCredentials.create());
             if (auth != null) {
@@ -193,7 +193,7 @@ public class AzureAuthHelper {
      *
      * @return ApplicationTokenCredentials object if configuration is correct; otherwise return null.
      */
-    protected ApplicationTokenCredentials getAppTokenCredentials() {
+    private ApplicationTokenCredentials getAppTokenCredentials() {
         final String clientId = config.getAuthenticationSetting(CLIENT_ID);
         if (StringUtils.isEmpty(clientId)) {
             logger.quiet(CLIENT_ID_NOT_CONFIG);

@@ -5,8 +5,6 @@
  */
 package com.microsoft.azure.gradle.functions;
 
-import com.microsoft.azure.gradle.functions.auth.AzureAuthHelper;
-import com.microsoft.azure.management.Azure;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -35,20 +33,36 @@ public class RunTask  extends FunctionsTask {
     private static final String WINDOWS_HOST_START = "cd /D %s && func host start";
     private static final String LINUX_HOST_START = "cd %s; func host start";
 
+    private String targetFunction;
+    private String functionInputString;
+    private String functionInputFile;
+
     public String getTargetFunction() {
-        return "";//targetFunction;
+        return targetFunction;
+    }
+
+    public void setTargetFunction(String targetFunction) {
+        this.targetFunction = targetFunction;
+    }
+
+    public void setFunctionInputString(String functionInputString) {
+        this.functionInputString = functionInputString;
     }
 
     public String getInputString() {
-        return "";//functionInputString;
+        return functionInputString;
     }
 
-    public File getInputFile() {
-        return null;//functionInputFile;
+    public void setFunctionInputFile(String functionInputFile) {
+        this.functionInputFile = functionInputFile;
+    }
+
+    public String getInputFile() {
+        return functionInputFile;
     }
 
     @TaskAction
-    void packageFunction() {
+    void runFunction() {
         try {
             checkStageDirectoryExistence();
 
@@ -80,22 +94,22 @@ public class RunTask  extends FunctionsTask {
         return buildCommand(command);
     }
 
-    protected String[] getCheckRuntimeCommand() {
+    private String[] getCheckRuntimeCommand() {
         return buildCommand("func");
     }
 
-    protected String[] getRunFunctionCommand() {
+    private String[] getRunFunctionCommand() {
         return StringUtils.isEmpty(getTargetFunction()) ?
                 getStartFunctionHostCommand() :
                 getRunSingleFunctionCommand();
     }
 
-    protected String[] getRunSingleFunctionCommand() {
+    private String[] getRunSingleFunctionCommand() {
         String command = format(getRunFunctionTemplate(), getDeploymentStageDirectory(), getTargetFunction());
         if (StringUtils.isNotEmpty(getInputString())) {
             command = command.concat(" -c ").concat(getInputString());
         } else if (getInputFile() != null) {
-            command = command.concat(" -f ").concat(getInputFile().getAbsolutePath());
+            command = command.concat(" -f ").concat(new File(getInputFile()).getAbsolutePath());
         }
         return buildCommand(command);
     }
