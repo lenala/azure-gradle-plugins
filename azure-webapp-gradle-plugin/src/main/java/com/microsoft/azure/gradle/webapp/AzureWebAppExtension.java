@@ -31,6 +31,8 @@ public class AzureWebAppExtension {
     @Input
     private String target;
     @Input
+    String packageUri;
+    @Input
     private boolean stopAppDuringDeployment;
     @Input
     private String subscriptionId;
@@ -83,6 +85,10 @@ public class AzureWebAppExtension {
 
     public String getTarget() {
         return target;
+    }
+
+    public String getPackageUri() {
+        return packageUri;
     }
 
     public boolean isStopAppDuringDeployment() {

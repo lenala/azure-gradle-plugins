@@ -21,5 +21,5 @@ public abstract class HandlerFactory {
 
     public abstract SettingsHandler getSettingsHandler(final Project project) throws GradleException;
 
-    public abstract ArtifactHandler getArtifactHandler(final Project project) throws GradleException;
+    public abstract ArtifactHandler getArtifactHandler(final DeployTask task) throws GradleException;
 }

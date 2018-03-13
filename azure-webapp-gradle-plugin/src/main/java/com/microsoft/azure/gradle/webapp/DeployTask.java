@@ -101,16 +101,16 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
         /*if (resources == null || resources.isEmpty()) {
             getLog().info(NO_RESOURCES_CONFIG);
         } else */
-        if (azureWebAppExtension.containerSettings != null) {
-            getLogger().quiet("Nothing to upload to FTP");
-        } else {
+//        if (azureWebAppExtension.containerSettings != null) {
+//            getLogger().quiet("Nothing to upload to FTP");
+//        } else {
             try {
                 util.beforeDeployArtifacts();
-                getFactory().getArtifactHandler(getProject()).publish();
+                getFactory().getArtifactHandler(this).publish();
             } finally {
                 util.afterDeployArtifacts();
             }
-        }
+//        }
     }
 
     public Azure getAzureClient() throws AzureAuthFailureException {

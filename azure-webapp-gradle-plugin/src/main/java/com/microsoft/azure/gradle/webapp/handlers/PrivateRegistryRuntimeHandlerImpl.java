@@ -18,7 +18,7 @@ import org.gradle.api.GradleException;
 import com.microsoft.azure.gradle.webapp.configuration.Server;
 
 public class PrivateRegistryRuntimeHandlerImpl implements RuntimeHandler {
-    public static final String SERVER_ID_NOT_FOUND = "Server Id not found in gradle.properties. ServerId=";
+    private static final String SERVER_ID_NOT_FOUND = "Server Id not found in gradle.properties. ServerId=";
 
     private DeployTask task;
     private AzureWebAppExtension extension;

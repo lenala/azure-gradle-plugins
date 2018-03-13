@@ -20,6 +20,9 @@ public class ContainerSettings {
     @Input
     private String imageName;
 
+    @Input
+    private boolean useBuiltInImage;
+
     /**
      * Start up file.
      */
@@ -47,6 +50,14 @@ public class ContainerSettings {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public boolean isUseBuiltInImage() {
+        return useBuiltInImage;
+    }
+
+    public void setUseBuiltInImage(boolean useBuiltInImage) {
+        this.useBuiltInImage = useBuiltInImage;
     }
 
     public String getStartUpFile() {

@@ -43,6 +43,8 @@ public class HandlerFactoryImpl extends HandlerFactory {
 
         final DockerImageType imageType = WebAppUtils.getDockerImageType(containerSettings);
         switch (imageType) {
+            case BUILT_IN:
+                return new BuiltInImageRuntimeHandlerImpl(task);
             case PUBLIC_DOCKER_HUB:
                 return new PublicDockerHubRuntimeHandlerImpl(task);
             case PRIVATE_DOCKER_HUB:
@@ -62,7 +64,11 @@ public class HandlerFactoryImpl extends HandlerFactory {
     }
 
     @Override
-    public ArtifactHandler getArtifactHandler(final Project project) throws GradleException {
-        return new FTPArtifactHandlerImpl(project);
+    public ArtifactHandler getArtifactHandler(final DeployTask task) throws GradleException {
+        if (task.getAzureWebAppExtension().getPackageUri() != null) {
+            return new MSDeployHandlerImpl(task);
+        } else {
+            return new FTPArtifactHandlerImpl(task.getProject());
+        }
     }
 }
