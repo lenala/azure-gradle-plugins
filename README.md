@@ -52,6 +52,8 @@ stopAppDuringDeployment | Specifies whether to stop Web App during deployment. O
 
 ## Web App on Windows
 
+`appServiceOnWindows` block should be specified, with the values:
+
 Name | Value
 ---|---
 javaVersion | Java version. Supported versions are: {1.7, 1.7.0_51, 1.7.0_71, 1.8, 1.8.0_25, 1.8.0_60, 1.8.0_73, 1.8.0_111, 1.8.0_92, 1.8.0_102, 1.8.0_144}
@@ -73,6 +75,8 @@ azurewebapp {
 
 ## Web App on Linux
 
+`appServiceOnLinux` block should be specified, with the values:
+
 Name | Value
 ---|---
 runtimeStack | Base image name. Right now possible values are: {'TOMCAT 9.0-jre8', 'TOMCAT 8.5-jre8}
@@ -93,6 +97,8 @@ azurewebapp {
 ``` 
 
 ## Web Apps on Containers
+
+`containerSettings` block should be specified.
 
 ### Deployment from Private Container Registry (Azure Container Registry)
 
