@@ -101,13 +101,11 @@ azurewebapp {
     resourceGroup = <resource_group>
     appName = <appName>
     pricingTier = "S1"
-```diff
-+containerSettings = {
-+    imageName = <image_name>
-+        serverId = <server_id>
-+        registryUrl = "https://" + serverId
-+    }
-```
+    containerSettings = {
+        imageName = <image_name>
+        serverId = <server_id>
+        registryUrl = "https://" + serverId
+    }
 }
 ```
 
