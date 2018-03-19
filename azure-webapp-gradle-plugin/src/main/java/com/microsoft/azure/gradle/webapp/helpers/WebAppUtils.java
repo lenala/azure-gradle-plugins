@@ -53,7 +53,6 @@ public class WebAppUtils {
         if (containerSettings == null || StringUtils.isEmpty(containerSettings.getImageName())) {
             return DockerImageType.NONE;
         }
-
         final boolean isCustomRegistry = StringUtils.isNotEmpty(containerSettings.getRegistryUrl());
         final boolean isPrivate = StringUtils.isNotEmpty(containerSettings.getServerId());
 

@@ -14,18 +14,21 @@ import java.util.Locale;
 public enum DeploymentType {
     NONE,
     FTP,
+    WEBDEPLOY,
+    WARDEPLOY,
     UNKNOWN;
 
-    public static DeploymentType fromString(final String input) {
-        if (StringUtils.isEmpty(input)) {
-            return NONE;
-        }
-
-        switch (input.toUpperCase(Locale.ENGLISH)) {
-            case "FTP":
-                return FTP;
-            default:
-                return UNKNOWN;
-        }
-    }
+//    public static DeploymentType fromString(final String input) {
+//        if (StringUtils.isEmpty(input)) {
+//            return NONE;
+//        }
+//
+//        switch (input.toUpperCase(Locale.ENGLISH)) {
+//            case "FTP":
+//                return FTP;
+//            case
+//            default:
+//                return UNKNOWN;
+//        }
+//    }
 }

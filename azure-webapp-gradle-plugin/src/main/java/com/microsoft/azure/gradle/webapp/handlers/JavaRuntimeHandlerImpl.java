@@ -26,19 +26,18 @@ public class JavaRuntimeHandlerImpl implements RuntimeHandler {
     public WithCreate defineAppWithRuntime() throws Exception {
         final WithCreate withCreate = WebAppUtils.defineApp(task)
                 .withNewWindowsPlan(extension.getPricingTier());
-        withCreate.withJavaVersion(extension.getJavaVersion())
-                .withWebContainer(extension.getJavaWebContainer());
+        withCreate.withJavaVersion(extension.getAppServiceOnWindows().getJavaVersion())
+                .withWebContainer(extension.getAppServiceOnWindows().getJavaWebContainer());
         return withCreate;
     }
 
     @Override
     public Update updateAppRuntime(final WebApp app) throws Exception {
         WebAppUtils.assureWindowsWebApp(app);
-        WebAppUtils.clearTags(app);
 
         final Update update = app.update();
-        update.withJavaVersion(extension.getJavaVersion())
-                .withWebContainer(extension.getJavaWebContainer());
+        update.withJavaVersion(extension.getAppServiceOnWindows().getJavaVersion())
+                .withWebContainer(extension.getAppServiceOnWindows().getJavaWebContainer());
         return update;
     }
 }

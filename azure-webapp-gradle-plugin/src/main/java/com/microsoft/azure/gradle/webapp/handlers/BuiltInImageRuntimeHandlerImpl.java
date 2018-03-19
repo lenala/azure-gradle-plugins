@@ -31,7 +31,7 @@ public class BuiltInImageRuntimeHandlerImpl implements RuntimeHandler {
     public WebApp.DefinitionStages.WithCreate defineAppWithRuntime() throws Exception {
         return WebAppUtils.defineApp(task)
                 .withNewLinuxPlan(extension.getPricingTier())
-                .withBuiltInImage(this.getJavaRunTimeStack(extension.getContainerSettings().getImageName()));
+                .withBuiltInImage(this.getJavaRunTimeStack(extension.getAppServiceOnLinux().getRuntimeStack()));
     }
 
     @Override

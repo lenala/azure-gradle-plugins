@@ -5,7 +5,10 @@
  */
 package com.microsoft.azure.gradle.webapp;
 
+import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnLinux;
+import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnWindows;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
+import com.microsoft.azure.gradle.webapp.configuration.DeploymentType;
 import com.microsoft.azure.gradle.webapp.model.PricingTierEnum;
 import com.microsoft.azure.management.appservice.JavaVersion;
 import com.microsoft.azure.management.appservice.PricingTier;
@@ -16,6 +19,7 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.Input;
 
 public class AzureWebAppExtension {
+    public static final String WEBAPP_EXTENSION_NAME = "azurewebapp";
     @Input
     private String appName;
     @Input
@@ -23,28 +27,23 @@ public class AzureWebAppExtension {
     @Input
     String region = "westus2";
     @Input
-    private String javaVersion;
-    @Input
     private PricingTierEnum pricingTier;
     @Input
-    private String javaWebContainer;
-    @Input
     private String target;
-    @Input
-    String packageUri;
     @Input
     private boolean stopAppDuringDeployment;
     @Input
     private String subscriptionId;
     @Input
     private String authFile;
+    @Input
+    private DeploymentType deploymentType = DeploymentType.FTP;
 
-    ContainerSettings containerSettings;
-    private Project project;
+    private AppServiceOnLinux appServiceOnLinux;
 
-    public AzureWebAppExtension(Project project) {
-        this.project = project;
-    }
+    private AppServiceOnWindows appServiceOnWindows;
+
+    private ContainerSettings containerSettings;
 
     public void setContainerSettings(Closure closure) {
         containerSettings = new ContainerSettings();
@@ -53,8 +52,30 @@ public class AzureWebAppExtension {
         closure.run();
     }
 
+    public void setAppServiceOnWindows(Closure closure) {
+        appServiceOnWindows = new AppServiceOnWindows();
+        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setDelegate(appServiceOnWindows);
+        closure.run();
+    }
+
+    public void setAppServiceOnLinux(Closure closure) {
+        appServiceOnLinux = new AppServiceOnLinux();
+        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setDelegate(appServiceOnLinux);
+        closure.run();
+    }
+
     public ContainerSettings getContainerSettings() {
         return containerSettings;
+    }
+
+    public AppServiceOnLinux getAppServiceOnLinux() {
+        return appServiceOnLinux;
+    }
+
+    public AppServiceOnWindows getAppServiceOnWindows() {
+        return appServiceOnWindows;
     }
 
     public String getAppName() {
@@ -73,22 +94,8 @@ public class AzureWebAppExtension {
         return pricingTier == null ? PricingTier.STANDARD_S1 : pricingTier.toPricingTier();
     }
 
-    public JavaVersion getJavaVersion() {
-        return StringUtils.isEmpty(javaVersion) ? null : JavaVersion.fromString(javaVersion);
-    }
-
-    public WebContainer getJavaWebContainer() {
-        return StringUtils.isEmpty(javaWebContainer)
-                ? WebContainer.TOMCAT_8_5_NEWEST
-                : WebContainer.fromString(javaWebContainer);
-    }
-
     public String getTarget() {
         return target;
-    }
-
-    public String getPackageUri() {
-        return packageUri;
     }
 
     public boolean isStopAppDuringDeployment() {
@@ -97,5 +104,9 @@ public class AzureWebAppExtension {
 
     public String getAuthFile() {
         return authFile;
+    }
+
+    public DeploymentType getDeploymentType() {
+        return deploymentType;
     }
 }

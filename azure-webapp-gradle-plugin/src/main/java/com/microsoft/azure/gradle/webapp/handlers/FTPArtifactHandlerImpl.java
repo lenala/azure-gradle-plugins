@@ -20,9 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import static com.microsoft.azure.gradle.webapp.AzureWebAppExtension.WEBAPP_EXTENSION_NAME;
+
 public class FTPArtifactHandlerImpl implements ArtifactHandler {
-    public static final String DEFAULT_WEBAPP_ROOT = "/site/wwwroot" + "/webapps";
-    public static final int DEFAULT_MAX_RETRY_TIMES = 3;
+    private static final String DEFAULT_WEBAPP_ROOT = "/site/wwwroot" + "/webapps";
+    private static final int DEFAULT_MAX_RETRY_TIMES = 3;
 
     private Project project;
     private AzureWebAppExtension azureWebAppExtension;
@@ -30,7 +32,7 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
 
     public FTPArtifactHandlerImpl(final Project project) {
         this.project = project;
-        azureWebAppExtension = (AzureWebAppExtension) project.getExtensions().getByName("deploy");
+        azureWebAppExtension = (AzureWebAppExtension) project.getExtensions().getByName(WEBAPP_EXTENSION_NAME);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
 
     private void uploadDirectoryToFTP() throws Exception {
         final FTPUploader uploader = getUploader();
-        final WebApp app = ((DeployTask) project.getTasks().getByPath("deploy")).getWebApp();
+        final WebApp app = ((DeployTask) project.getTasks().getByPath(DeployTask.TASK_NAME)).getWebApp();
         final PublishingProfile profile = app.getPublishingProfile();
         final String serverUrl = profile.ftpUrl().split("/", 2)[0];
         uploader.uploadDirectoryWithRetries(serverUrl,

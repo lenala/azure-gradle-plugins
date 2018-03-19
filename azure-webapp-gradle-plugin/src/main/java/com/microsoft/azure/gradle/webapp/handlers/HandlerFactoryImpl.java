@@ -7,6 +7,9 @@
 package com.microsoft.azure.gradle.webapp.handlers;
 
 import com.microsoft.azure.gradle.webapp.DeployTask;
+import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnLinux;
+import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnWindows;
+import com.microsoft.azure.gradle.webapp.configuration.DeploymentType;
 import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
 import com.microsoft.azure.gradle.webapp.configuration.DockerImageType;
@@ -25,26 +28,30 @@ public class HandlerFactoryImpl extends HandlerFactory {
 
     @Override
     public RuntimeHandler getRuntimeHandler(final DeployTask task) throws GradleException {
-        final JavaVersion javaVersion = task.getAzureWebAppExtension().getJavaVersion();
+        AppServiceOnWindows appServiceOnWindows = task.getAzureWebAppExtension().getAppServiceOnWindows();
+
+        AppServiceOnLinux appServiceOnLinux = task.getAzureWebAppExtension().getAppServiceOnLinux();
         final ContainerSettings containerSettings = task.getAzureWebAppExtension().getContainerSettings();
-        // Neither <javaVersion> nor <containerSettings> is specified
-        if (javaVersion == null && (containerSettings == null || containerSettings.isEmpty())) {
+        // No configuration is specified
+        if (appServiceOnLinux == null && appServiceOnWindows == null && containerSettings == null ) {
             return new NullRuntimeHandlerImpl();
         }
 
-        // Both <javaVersion> and <containerSettings> are specified
-        if (javaVersion != null && containerSettings != null && !containerSettings.isEmpty()) {
-            throw new GradleException(RUNTIME_CONFIG_CONFLICT);
+//        // More than one configuration specified
+//        if (javaVersion != null && containerSettings != null && !containerSettings.isEmpty()) {
+//            throw new GradleException(RUNTIME_CONFIG_CONFLICT);
+//        }
+
+        if (appServiceOnWindows != null) {
+            return new JavaRuntimeHandlerImpl(task);
         }
 
-        if (javaVersion != null) {
-            return new JavaRuntimeHandlerImpl(task);
+        if (appServiceOnLinux != null) {
+            return new BuiltInImageRuntimeHandlerImpl(task);
         }
 
         final DockerImageType imageType = WebAppUtils.getDockerImageType(containerSettings);
         switch (imageType) {
-            case BUILT_IN:
-                return new BuiltInImageRuntimeHandlerImpl(task);
             case PUBLIC_DOCKER_HUB:
                 return new PublicDockerHubRuntimeHandlerImpl(task);
             case PRIVATE_DOCKER_HUB:
@@ -65,10 +72,13 @@ public class HandlerFactoryImpl extends HandlerFactory {
 
     @Override
     public ArtifactHandler getArtifactHandler(final DeployTask task) throws GradleException {
-        if (task.getAzureWebAppExtension().getPackageUri() != null) {
-            return new MSDeployHandlerImpl(task);
-        } else {
-            return new FTPArtifactHandlerImpl(task.getProject());
+        if (DeploymentType.WARDEPLOY.equals(task.getAzureWebAppExtension().getDeploymentType())) {
+            return new WarDeployHandlerImpl(task);
         }
+//        if (task.getAzureWebAppExtension().getPackageUri() != null) {
+//            return new WebDeployHandlerImpl(task);
+//        } else {
+            return new FTPArtifactHandlerImpl(task.getProject());
+//        }
     }
 }
