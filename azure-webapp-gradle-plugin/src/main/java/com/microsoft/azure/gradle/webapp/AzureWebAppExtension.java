@@ -33,8 +33,6 @@ public class AzureWebAppExtension {
     @Input
     private boolean stopAppDuringDeployment;
     @Input
-    private String subscriptionId;
-    @Input
     private String authFile;
     @Input
     private DeploymentType deploymentType = DeploymentType.FTP;

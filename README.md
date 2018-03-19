@@ -1,5 +1,19 @@
 # azure-gradle-plugins
 
+
+- [Azure WebApp plugin](#webapp-plugin)
+  - [Compiling plugin](#compile-webapp-plugin)
+  - [Running sample ToDo app](#sample-app)
+  - [Common settings](#common-settings)
+  - [Web App on Windows](#web-app-on-windows)
+  - [Web App on Linux](#web-app-on-linux)
+  - [Web Apps on Containers](#web-app-on-containers)
+    - [Deployment from Private Container Registry (Azure Container Registry)](#web-app-acr)
+    - [Deployment from public Docker Hub](#web-app-public-docker)
+    - [Deployment from private Docker Hub](#web-app-private-docker)
+- [Azure Functions plugin](#azure-functions-plugin)  
+- [Azure Authentication settings](#azure-authentication)  
+
 ## Compiling plugin
 
 In `azure-webapp-gradle-plugin` folder in `build.gradle` update reference to local maven repo. Then run
@@ -20,6 +34,84 @@ To deploy app to Azure, run
 gradle dockerPushImage
 gradle azureWebappDeploy
 ```
+
+## Common settings
+
+Name | Value
+---|---
+deploymentType | Deployment type - one of {FTP, WEBDEPLOY, WARDEPLOY}. Optional, default value is FTP.
+resourceGroup | Azure resource group to create Web App
+appName | Web App name
+region | Azure region. Optional, default is WEST_US
+pricingTier | Pricing tier
+authFile | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication)
+target | Target artifact to deploy. Not used for Web Apps for containers.
+stopAppDuringDeployment | Specifies whether to stop Web App during deployment. Optional, default is false
+
+# 4 types of deployment are supported:
+
+## Web App on Windows
+
+Name | Value
+---|---
+javaVersion | Java version. Supported versions are: {1.7, 1.7.0_51, 1.7.0_71, 1.8, 1.8.0_25, 1.8.0_60, 1.8.0_73, 1.8.0_111, 1.8.0_92, 1.8.0_102, 1.8.0_144}
+javaWebContainer | Web Container. Optional, default is newest Tomcat 8.5.
+
+TOMCAT_8_5_NEWEST
+```
+azurewebapp {
+    resourceGroup = <resource_group>
+    appName = <appName>
+    pricingTier = "S2"
+    target = <path_to_war_file>
+    appServiceOnWindows = {
+        javaWebContainer = "tomcat 8.5"
+        javaVersion = "1.8.0_102"
+    }
+}
+``` 
+
+## Web App on Linux
+
+Name | Value
+---|---
+runtimeStack | Base image name. Right now possible values are: {'TOMCAT 9.0-jre8', 'TOMCAT 8.5-jre8}
+urlPath | Url path. Optional, if not specified Web App will be deployed to root
+
+```
+azurewebapp {
+    deploymentType = 'wardeploy'
+    resourceGroup = <resource_group>
+    appName = <appName>
+    pricingTier = "S2"
+    target = <path_to_war_file>
+    appServiceOnLinux = {
+        runtimeStack = 'TOMCAT 9.0-jre8'
+        urlPath = <url_path>
+    }
+}
+``` 
+
+## Web Apps on Containers
+
+### Deployment from Private Container Registry (Azure Container Registry)
+
+```
+azurewebapp {
+    resourceGroup = <resource_group>
+    appName = <appName>
+    pricingTier = "S1"
+    containerSettings = {
+        imageName = <image_name>
+        serverId = <server_id>
+        registryUrl = "https://" + serverId
+    }
+}
+```
+
+### Deployment from public Docker Hub
+
+### Deployment from private Docker Hub
 
 ## Azure Authentication settings
 To authenticate with Azure, device login can be used. To enable that, you need to sign in with Azure CLI first.
@@ -52,36 +144,3 @@ environment=(optional)
 ```
 
 `subscriptionId` can be also provided in gradle.properties, in case it is different from default subscription id.
-
-# 4 types of deployment are supported:
-
-## Deployment from Private Container Registry (Azure Container Registry)
-
-```
-azurewebapp {
-    resourceGroup = <resource_group>
-    appName = <appName>
-    pricingTier = "S1"
-    containerSettings = {
-        imageName = <image_name>
-        serverId = <server_id>
-        registryUrl = "https://" + serverId
-    }
-}
-```
-
-## Deplyment from public Docke Hub
-
-## Deployment from private Docker Hub
-
-## Deployment to App Service on Windows
-```
-azurewebapp {
-    resourceGroup = <resource_group>
-    appName = <appName>
-    javaVersion = "1.8.0_102"
-    pricingTier = "S2"
-    javaWebContainer = "tomcat 7.0"
-    target = <path_to_war_file>
-}
-``` 
