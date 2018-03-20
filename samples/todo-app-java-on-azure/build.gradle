@@ -77,11 +77,12 @@ docker {
     }
 }
 
+// Deploy from container registry
 azurewebapp {
     resourceGroup = "rg5"
     appName = "mynewwebapplena18"
     pricingTier = "S2"
-    authFile = 'C:/stuff/demo.azureauth'
+    authFile = 'C:/stuff/my.azureauth'
     containerSettings = {
         imageName = dockerImage
         serverId = project.property('serverId')

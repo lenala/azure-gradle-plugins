@@ -58,6 +58,7 @@ Name | Value
 ---|---
 javaVersion | Java version. Supported versions are: {1.7, 1.7.0_51, 1.7.0_71, 1.8, 1.8.0_25, 1.8.0_60, 1.8.0_73, 1.8.0_111, 1.8.0_92, 1.8.0_102, 1.8.0_144}
 javaWebContainer | Web Container. Optional, default is newest Tomcat 8.5.
+urlPath | Url path. Optional, if not specified Web App will be deployed to root. Works for WARDEPLOY deployment type only.
 
 TOMCAT_8_5_NEWEST
 ```
@@ -69,6 +70,7 @@ azurewebapp {
     appServiceOnWindows = {
         javaWebContainer = "tomcat 8.5"
         javaVersion = "1.8.0_102"
+        urlPath = <url_path>
     }
 }
 ``` 
@@ -80,7 +82,7 @@ azurewebapp {
 Name | Value
 ---|---
 runtimeStack | Base image name. Right now possible values are: {'TOMCAT 9.0-jre8', 'TOMCAT 8.5-jre8}
-urlPath | Url path. Optional, if not specified Web App will be deployed to root
+urlPath | Url path. Optional, if not specified Web App will be deployed to root. Works for WARDEPLOY deployment type only.
 
 ```
 azurewebapp {

@@ -1,0 +1,60 @@
+// START SNIPPET use-gretty-plugin
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url uri('C:/Users/elenla.REDMOND/.m2/repository')
+        }
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:1.4.2'
+        classpath group: 'com.microsoft.azure', name: 'azure-webapp-gradle-plugin',
+                version: '1.0-SNAPSHOT'
+    }
+}
+apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'war'
+apply plugin: 'com.microsoft.azure.azurewebapp'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: '1.4'
+    compile group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+}
+
+gretty {
+    httpPort = 8080
+}
+
+// Azure Web App on Linux
+//azurewebapp {
+////    deploymentType = 'wardeploy'
+//    resourceGroup = "rg1"
+//    appName = "webapplena7"
+//    pricingTier = "S2"
+//    authFile = 'C:/stuff/my.azureauth'
+//    target = 'C:\\stuff\\azure-gradle-plugins.4\\samples\\quickstart\\build\\libs\\quickstart.war'
+//    appServiceOnLinux = {
+//        runtimeStack = 'TOMCAT 9.0-jre8'
+//        urlPath = 'quickstart'
+//    }
+//}
+
+// Azure Web App on Windows
+azurewebapp {
+    deploymentType = 'wardeploy'
+    resourceGroup = "rg1"
+    appName = "webapplena13"
+    pricingTier = "S2"
+    authFile = 'C:/stuff/my.azureauth'
+    region = 'southcentralus'
+    target = 'C:\\stuff\\azure-gradle-plugins.4\\samples\\quickstart\\build\\libs\\quickstart.war'
+    appServiceOnWindows = {
+        javaWebContainer = "tomcat 8.5"
+        javaVersion = "1.8.0_102"
+        urlPath = 'quickstart'
+    }
+}

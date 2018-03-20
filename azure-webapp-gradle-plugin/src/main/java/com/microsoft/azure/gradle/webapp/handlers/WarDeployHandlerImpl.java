@@ -6,6 +6,7 @@
 package com.microsoft.azure.gradle.webapp.handlers;
 
 import com.microsoft.azure.gradle.webapp.DeployTask;
+import org.gradle.api.GradleException;
 
 import java.io.File;
 
@@ -18,10 +19,17 @@ public class WarDeployHandlerImpl implements ArtifactHandler {
 
     @Override
     public void publish() throws Exception {
-        String urlPath = task.getAzureWebAppExtension().getAppServiceOnLinux().getUrlPath();
+        String urlPath;
+        if (task.getAzureWebAppExtension().getAppServiceOnLinux() != null) {
+           urlPath = task.getAzureWebAppExtension().getAppServiceOnLinux().getUrlPath();
+        } else if (task.getAzureWebAppExtension().getAppServiceOnWindows() != null){
+            urlPath = task.getAzureWebAppExtension().getAppServiceOnWindows().getUrlPath();
+        } else {
+            throw new GradleException("WARDEPLOY deployment type not available for Web Apps on Containers deployments");
+        }
         task.getLogger().quiet(urlPath);
-        if (task.getAzureWebAppExtension().getAppServiceOnLinux().getUrlPath() != null) {
-            task.getWebApp().update().withAppSetting("SCM_TARGET_PATH", "webapps/" + task.getAzureWebAppExtension().getAppServiceOnLinux().getUrlPath()).apply();
+        if (urlPath != null) {
+            task.getWebApp().update().withAppSetting("SCM_TARGET_PATH", "webapps/" + urlPath).apply();
         }
         task.getWebApp().warDeploy(new File(task.getAzureWebAppExtension().getTarget()));
     }

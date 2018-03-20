@@ -18,6 +18,9 @@ public class AppServiceOnWindows {
     private String javaWebContainer;
     @Input
     private String javaVersion;
+    @Input
+    @Optional
+    private String urlPath;
 
     public WebContainer getJavaWebContainer() {
         return StringUtils.isEmpty(javaWebContainer)
@@ -27,5 +30,9 @@ public class AppServiceOnWindows {
 
     public JavaVersion getJavaVersion() {
         return StringUtils.isEmpty(javaVersion) ? null : JavaVersion.fromString(javaVersion);
+    }
+
+    public String getUrlPath() {
+        return urlPath;
     }
 }
