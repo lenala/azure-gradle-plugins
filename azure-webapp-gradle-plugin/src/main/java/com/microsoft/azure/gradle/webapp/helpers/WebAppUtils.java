@@ -18,10 +18,10 @@ import org.gradle.api.tasks.TaskExecutionException;
 
 public class WebAppUtils {
     public static final String CONTAINER_SETTING_NOT_APPLICABLE =
-            "<containerSettings> is not applicable to Web App on Windows; " +
-                    "please use <javaVersion> and <javaWebContainer> to configure your runtime.";
-    public static final String JAVA_VERSION_NOT_APPLICABLE = "<javaVersion> is not applicable to Web App on Linux; " +
-            "please use <containerSettings> to specify your runtime.";
+            "Trying to deploy to existing Web App on Windows; 'containerSettings' or 'appServiceOnLinux' not applicaple. " +
+                    "Please use 'appServiceOnWindows' to configure your runtime.";
+    public static final String JAVA_VERSION_NOT_APPLICABLE = "Trying to deploy to existing Web App on Linux; 'appServiceOnWindows' is not applicable to Web App on Linux. " +
+            "please use 'containerSettings' or appServiceOnWindows' to specify your runtime.";
 
     private static boolean isLinuxWebApp(final WebApp app) {
         return app.inner().kind().contains("linux");

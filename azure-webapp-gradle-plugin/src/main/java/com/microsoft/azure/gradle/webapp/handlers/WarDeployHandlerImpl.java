@@ -28,9 +28,7 @@ public class WarDeployHandlerImpl implements ArtifactHandler {
             throw new GradleException("WARDEPLOY deployment type not available for Web Apps on Containers deployments");
         }
         task.getLogger().quiet(urlPath);
-        if (urlPath != null) {
-            task.getWebApp().update().withAppSetting("SCM_TARGET_PATH", "webapps/" + urlPath).apply();
-        }
+        task.getWebApp().update().withAppSetting("SCM_TARGET_PATH", "webapps/" + (urlPath == null ? "" : urlPath)).apply();
         task.getWebApp().warDeploy(new File(task.getAzureWebAppExtension().getTarget()));
     }
 }
