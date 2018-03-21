@@ -29,6 +29,12 @@ public class WarDeployHandlerImpl implements ArtifactHandler {
         }
         task.getLogger().quiet(urlPath);
         task.getWebApp().update().withAppSetting("SCM_TARGET_PATH", "webapps/" + (urlPath == null ? "" : urlPath)).apply();
-        task.getWebApp().warDeploy(new File(task.getAzureWebAppExtension().getTarget()));
+        String target = task.getAzureWebAppExtension().getTarget();
+        if (target == null || target.isEmpty()) {
+            target = task.getProject().getTasks().getByPath("war").getOutputs().getFiles().getAsPath();
+        }
+        task.getLogger().quiet("War name is: " + target);
+
+        task.getWebApp().warDeploy(new File(target));
     }
 }

@@ -43,6 +43,10 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
 
     protected void copyResourceToStageDirectory() throws IOException {
         String target = azureWebAppExtension.getTarget();
+        if (target == null || target.isEmpty()) {
+            target = project.getTasks().getByPath("war").getOutputs().getFiles().getAsPath();
+        }
+        logger.quiet("War name is: " + target);
 //        Files.copy(Paths.get(target), Paths.get(task.getDeploymentStageDirectory()));
         FileUtils.copyFileToDirectory(new File(target), new File(getDeploymentStageDirectory()));
 //        Utils.copyResources(/*mojo.getProject()*/null,

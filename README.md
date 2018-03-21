@@ -45,7 +45,7 @@ appName | Web App name
 region | Azure region. Optional, default is WEST_US
 pricingTier | Pricing tier
 authFile | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication)
-target | Target artifact to deploy. Not used for Web Apps for containers.
+target | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
 stopAppDuringDeployment | Specifies whether to stop Web App during deployment. Optional, default is false
 
 # 4 types of deployment are supported:
