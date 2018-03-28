@@ -137,6 +137,7 @@ azurewebapp {
 ### Tasks
 
 #### PackageTask
+Package the functions for deployment.
 
 ```
 task azureFunctionsPackage(type: PackageTask) {
@@ -148,6 +149,7 @@ task azureFunctionsPackage(type: PackageTask) {
 ```
 
 #### DeployTask
+Deploy the project output jar to target Function App.
 ```
 task azureFunctionsDeploy(type: DeployTask) {
     appName = "myFunctionApp"
@@ -157,6 +159,7 @@ task azureFunctionsDeploy(type: DeployTask) {
 ```
 
 #### RunTask
+Invoke Azure Functions Local Emulator to run all functions.
 ```
 task azureFunctionsRun(type: RunTask) {
     appName = "myFunctionApp"
@@ -166,6 +169,7 @@ task azureFunctionsRun(type: RunTask) {
 ```
 
 #### AddTask
+Create new Java function and add to current project.
 ```
 task azureFunctionsAdd(type: AddTask) {
     functionPackageName = "my.function"
