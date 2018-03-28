@@ -11,7 +11,9 @@
     - [Deployment from Private Container Registry (Azure Container Registry)](#web-app-acr)
     - [Deployment from public Docker Hub](#web-app-public-docker)
     - [Deployment from private Docker Hub](#web-app-private-docker)
-- [Azure Functions plugin](#azure-functions-plugin)  
+- [Azure Functions plugin](#azure-functions-plugin)
+    - [Prerequisites](#azure-functions-prereq)
+    - [Tasks](#azure-functions-tasks)  
 - [Azure Authentication settings](#azure-authentication)  
 
 ## Compiling plugin
@@ -120,6 +122,52 @@ azurewebapp {
 ### Deployment from public Docker Hub
 
 ### Deployment from private Docker Hub
+
+## Azure Functions plugin
+
+### Prerequisites
+
+- [.Net Core SDK latest version](https://www.microsoft.com/net/core)
+- [Azure Functions Core Tools 2.0 and above](https://www.npmjs.com/package/azure-functions-core-tools)
+
+### Tasks
+
+#### PackageTask
+
+```
+task azureFunctionsPackage(type: PackageTask) {
+    dependsOn jar
+    appName = "myFunctionApp"
+    resourceGroup = "myFunctionApp"
+    region = "westus"
+}
+```
+
+#### DeployTask
+```
+task azureFunctionsDeploy(type: DeployTask) {
+    appName = "myFunctionApp"
+    resourceGroup = "myFunctionApp"
+    region = "westus"
+}
+```
+
+#### RunTask
+```
+task azureFunctionsRun(type: RunTask) {
+    appName = "myFunctionApp"
+    resourceGroup = "myFunctionApp"
+    region = "westus"
+}
+```
+
+#### AddTask
+```
+task azureFunctionsAdd(type: AddTask) {
+    functionPackageName = "my.function"
+    functionTemplate = "HttpTrigger"
+}
+```
 
 ## Azure Authentication settings
 To authenticate with Azure, device login can be used. To enable that, you need to sign in with Azure CLI first.
