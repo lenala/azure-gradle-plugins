@@ -8,8 +8,10 @@ package com.microsoft.azure.gradle.functions;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
+import org.gradle.process.internal.DefaultExecAction;
 
 import java.io.File;
 import java.io.InputStream;
@@ -153,15 +155,18 @@ public class RunTask  extends FunctionsTask {
                               final String errorMessage) throws Exception {
         getLogger().quiet("Executing command: " + StringUtils.join(command, " "));
 
-        final ProcessBuilder.Redirect redirect = getStdoutRedirect(showStdout);
-        final Process process = new ProcessBuilder(command)
-                .redirectOutput(redirect)
-                .redirectErrorStream(true)
-                .start();
-
-        process.waitFor();
-
-        handleExitValue(process.exitValue(), validReturnCodes, errorMessage, process.getInputStream());
+        DefaultExecAction action = new DefaultExecAction(getServices().get(FileResolver.class));
+        action.setCommandLine(command);
+        action.execute();
+//        final ProcessBuilder.Redirect redirect = getStdoutRedirect(showStdout);
+//        final Process process = new ProcessBuilder(command)
+//                .redirectOutput(redirect)
+//                .redirectErrorStream(true)
+//                .start();
+//
+//        process.waitFor();
+//
+//        handleExitValue(process.exitValue(), validReturnCodes, errorMessage, process.getInputStream());
     }
 
     private ProcessBuilder.Redirect getStdoutRedirect(boolean showStdout) {
