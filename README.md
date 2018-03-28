@@ -132,8 +132,7 @@ azurewebapp {
 
 ### Prerequisites
 
-These are required only to run Azure Functions locally:
-- [.Net Core SDK latest version](https://www.microsoft.com/net/core)
+Required only to run Azure Functions locally:
 - [Azure Functions Core Tools 2.0 and above](https://www.npmjs.com/package/azure-functions-core-tools)
 
 ### Common configuration
@@ -204,6 +203,12 @@ To add a new function, run:
 gradle azureFunctionsAdd
 ```
 Where `azureFunctionsAdd` is of type `AddTask`.
+
+To run function locally, use:
+```cmd
+gradle azureFunctionsRun
+```
+Where `azureFunctionsRun` is of type `RunTask`.
 
 [Source code for sample app](./samples/walkthrough) 
 
