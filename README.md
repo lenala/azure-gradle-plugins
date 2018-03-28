@@ -15,7 +15,7 @@
     - [Prerequisites](#prerequisites)
     - [Common configuration](#common-configuration)
     - [Tasks](#tasks)
-    - [Running sample Azure Functions app](#running-sample-azure-functions-app)(./samples/walkthrough)  
+    - [Running sample Azure Functions app](#running-sample-azure-functions-app)
 - [Azure Authentication settings](#azure-authentication-settings)  
 
 ## Compiling plugin
