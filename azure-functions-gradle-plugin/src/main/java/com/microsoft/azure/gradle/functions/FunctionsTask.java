@@ -93,7 +93,7 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
 
     public String getOutputDirectory() {
         if (outputDirectory == null) {
-            outputDirectory = getProject().getBuildDir().getAbsolutePath() + "/classes/main";
+            outputDirectory = getProject().getTasks().getByPath("compileJava").getOutputs().getFiles().getAsPath();
         }
         return outputDirectory;
     }

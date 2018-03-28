@@ -77,8 +77,8 @@ public class FTPUploader {
      * @param targetDirectoryPath
      * @return Boolean to indicate whether uploading is successful.
      */
-    protected boolean uploadDirectory(final String ftpServer, final String username, final String password,
-                                      final String sourceDirectoryPath, final String targetDirectoryPath) {
+    private boolean uploadDirectory(final String ftpServer, final String username, final String password,
+                                    final String sourceDirectoryPath, final String targetDirectoryPath) {
         logger.debug("FTP username: " + username);
         try {
             final FTPClient ftpClient = getFTPClient(ftpServer, username, password);
@@ -104,8 +104,8 @@ public class FTPUploader {
      * @param logPrefix
      * @throws IOException
      */
-    protected void uploadDirectory(final FTPClient ftpClient, final String sourceDirectoryPath,
-                                   final String targetDirectoryPath, final String logPrefix) throws IOException {
+    private void uploadDirectory(final FTPClient ftpClient, final String sourceDirectoryPath,
+                                 final String targetDirectoryPath, final String logPrefix) throws IOException {
         logger.quiet(String.format(UPLOAD_DIR, logPrefix, sourceDirectoryPath, targetDirectoryPath));
         final File sourceDirectory = new File(sourceDirectoryPath);
         final File[] files = sourceDirectory.listFiles();
@@ -139,8 +139,8 @@ public class FTPUploader {
      * @param logPrefix
      * @throws IOException
      */
-    protected void uploadFile(final FTPClient ftpClient, final String sourceFilePath, final String targetFilePath,
-                              final String logPrefix) throws IOException {
+    private void uploadFile(final FTPClient ftpClient, final String sourceFilePath, final String targetFilePath,
+                            final String logPrefix) throws IOException {
         logger.quiet(String.format(UPLOAD_FILE, logPrefix, sourceFilePath, targetFilePath));
         final File sourceFile = new File(sourceFilePath);
         try (final InputStream is = new FileInputStream(sourceFile)) {
@@ -158,7 +158,7 @@ public class FTPUploader {
         }
     }
 
-    protected FTPClient getFTPClient(final String ftpServer, final String username, final String password)
+    private FTPClient getFTPClient(final String ftpServer, final String username, final String password)
             throws Exception {
         final FTPClient ftpClient = new FTPClient();
         ftpClient.connect(ftpServer);
