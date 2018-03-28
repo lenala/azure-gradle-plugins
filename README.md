@@ -13,8 +13,9 @@
     - [Deployment from private Docker Hub](#deployment-from-private-docker-hub)
 - [Azure Functions plugin](#azure-functions-plugin)
     - [Prerequisites](#prerequisites)
+    - [Common configuration](#common-configuration)
     - [Tasks](#tasks)
-    - [Azure Functions plugin sample usage](./samples/walkthrough)  
+    - [Running sample Azure Functions app](#running-sample-azure-functions-app)(./samples/walkthrough)  
 - [Azure Authentication settings](#azure-authentication-settings)  
 
 ## Compiling plugin
@@ -131,8 +132,17 @@ azurewebapp {
 
 ### Prerequisites
 
+These are required to run Azure Functions locally:
 - [.Net Core SDK latest version](https://www.microsoft.com/net/core)
 - [Azure Functions Core Tools 2.0 and above](https://www.npmjs.com/package/azure-functions-core-tools)
+
+### Common configuration
+
+```
+azurefunctions {
+    authFile = <file_with_authentication_info>
+}
+```
 
 ### Tasks
 
@@ -176,6 +186,23 @@ task azureFunctionsAdd(type: AddTask) {
     functionTemplate = "HttpTrigger"
 }
 ```
+
+## [Running sample Azure Functions app]
+
+To build and deploy Azure Functions application, run:
+```cmd
+gradle azureFunctionsPackage
+gradle azureFunctionsDeploy
+```
+Where `azureFunctionsPackage` is of type `DeployTask` and `AzureFunctionsDeploy` of type `DeployTask`. 
+
+To add a new function, run:
+```cmd
+gradle azureFunctionsAdd
+```
+Where `azureFunctionsAdd` is of type `AddTask`.
+
+[Source code for sample app](./samples/walkthrough) 
 
 ## Azure Authentication settings
 To authenticate with Azure, device login can be used. To enable that, you need to sign in with Azure CLI first.
