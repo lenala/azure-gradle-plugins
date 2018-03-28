@@ -187,7 +187,7 @@ task azureFunctionsAdd(type: AddTask) {
 }
 ```
 
-## [Running sample Azure Functions app]
+## Running sample Azure Functions app
 
 To build and deploy Azure Functions application, run:
 ```cmd
@@ -195,6 +195,9 @@ gradle azureFunctionsPackage
 gradle azureFunctionsDeploy
 ```
 Where `azureFunctionsPackage` is of type `DeployTask` and `AzureFunctionsDeploy` of type `DeployTask`. 
+
+To verify function running, you can use `curl -X POST -d "Azure World" <Deployed Host URL>/api/hello`.
+
 
 To add a new function, run:
 ```cmd
