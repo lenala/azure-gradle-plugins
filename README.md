@@ -13,7 +13,8 @@
     - [Deployment from private Docker Hub](#web-app-private-docker)
 - [Azure Functions plugin](#azure-functions-plugin)
     - [Prerequisites](#azure-functions-prereq)
-    - [Tasks](#azure-functions-tasks)  
+    - [Tasks](#azure-functions-tasks)
+    - [Azure Functions plugin sample usage](./samples/walkthrough)  
 - [Azure Authentication settings](#azure-authentication)  
 
 ## Compiling plugin
@@ -76,6 +77,7 @@ azurewebapp {
     }
 }
 ``` 
+[Usage example](./samples/quickstart)
 
 ## Web App on Linux
 
@@ -99,6 +101,7 @@ azurewebapp {
     }
 }
 ``` 
+[Usage example](./samples/quickstart)
 
 ## Web Apps on Containers
 
@@ -118,6 +121,7 @@ azurewebapp {
     }
 }
 ```
+[Usage example](./samples/todo-app-java-on-azure)
 
 ### Deployment from public Docker Hub
 
