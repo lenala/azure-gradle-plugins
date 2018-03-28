@@ -1,21 +1,21 @@
 # azure-gradle-plugins
 
 
-- [Azure WebApp plugin](#webapp-plugin)
-  - [Compiling plugin](#compile-webapp-plugin)
-  - [Running sample ToDo app](#sample-app)
+- [Azure WebApp plugin](#azure-webapp-plugin)
+  - [Compiling plugin](#compiling-plugin)
+  - [Running sample ToDo app](#running-sample-todo-app)
   - [Common settings](#common-settings)
   - [Web App on Windows](#web-app-on-windows)
   - [Web App on Linux](#web-app-on-linux)
-  - [Web Apps on Containers](#web-app-on-containers)
-    - [Deployment from Private Container Registry (Azure Container Registry)](#web-app-acr)
-    - [Deployment from public Docker Hub](#web-app-public-docker)
-    - [Deployment from private Docker Hub](#web-app-private-docker)
+  - [Web Apps on Containers](#web-apps-on-containers)
+    - [Deployment from Private Container Registry (Azure Container Registry)](#deployment-from-private-container-registry-azure-container-registry)
+    - [Deployment from public Docker Hub](#deployment-from-public-docker-hub)
+    - [Deployment from private Docker Hub](#deployment-from-private-docker-hub)
 - [Azure Functions plugin](#azure-functions-plugin)
-    - [Prerequisites](#azure-functions-prereq)
-    - [Tasks](#azure-functions-tasks)
+    - [Prerequisites](#prerequisites)
+    - [Tasks](#tasks)
     - [Azure Functions plugin sample usage](./samples/walkthrough)  
-- [Azure Authentication settings](#azure-authentication)  
+- [Azure Authentication settings](#azure-authentication-settings)  
 
 ## Compiling plugin
 
