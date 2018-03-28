@@ -132,7 +132,7 @@ azurewebapp {
 
 ### Prerequisites
 
-These are required to run Azure Functions locally:
+These are required only to run Azure Functions locally:
 - [.Net Core SDK latest version](https://www.microsoft.com/net/core)
 - [Azure Functions Core Tools 2.0 and above](https://www.npmjs.com/package/azure-functions-core-tools)
 
