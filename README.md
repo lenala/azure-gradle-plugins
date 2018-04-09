@@ -21,22 +21,43 @@
 ## Compiling plugin
 
 In `azure-webapp-gradle-plugin` folder in `build.gradle` update reference to local maven repo. Then run
+
 ```cmd
-gradle install
+# Windows
+gradlew.bat install
+
+# Linux/macOS
+./gradlew install
 ```
 
 ## Running sample ToDo app
 
-In `samples/todo-app-on-azure` folder, update reference to local maven repo, appName and Azure Container Registry url and credentials.
+In `samples/todo-app-on-azure` folder, update reference to local maven repo, appName and Azure Container Registry url and credentials. Follow [this tutorial](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal) to get started with Azure Container Registry.
 
-In `gradle.properties`, update container registry credentials.
+In `gradle.properties`, set your container registry `serverId`, `serverUsername`, and `serverPassword`.
 
-In `application.properties`, update CosmosDB credentials.
+To push the Docker image, you'll need Docker running, then execute the `dockerPushImage` task:
 
-To deploy app to Azure, run
 ```cmd
-gradle dockerPushImage
-gradle azureWebappDeploy
+# Windows
+gradlew.bat dockerPushImage
+
+# Linux/macOS
+./gradlew dockerPushImage
+```
+
+Create a new CosmosDB instance and set your CosmosDB credentials in `src/main/resources/application.properties`.
+
+Configure `azurewebapp` in `build.gradle` with valid values for `resourceGroup`, `appName`, `pricingTier`, and `authFile` (see the section on [Azure Authentication settings](#azure-authentication-settings)).
+
+Then deploy the ToDo web application to a Azure Container instance, you must specify  the `azureWebappDeploy` task:
+
+```cmd
+# Windows
+gradlew.bat azureWebappDeploy
+
+# Linux/macOS
+./gradlew azureWebappDeploy
 ```
 
 ## Common settings
@@ -48,7 +69,7 @@ resourceGroup | Azure resource group to create Web App
 appName | Web App name
 region | Azure region. Optional, default is WEST_US
 pricingTier | Pricing tier
-authFile | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication)
+authFile | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication-settings)
 target | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
 stopAppDuringDeployment | Specifies whether to stop Web App during deployment. Optional, default is false
 
@@ -77,7 +98,7 @@ azurewebapp {
         urlPath = <url_path>
     }
 }
-``` 
+```
 [Usage example](./samples/quickstart)
 
 ## Web App on Linux
@@ -101,7 +122,7 @@ azurewebapp {
         urlPath = <url_path>
     }
 }
-``` 
+```
 [Usage example](./samples/quickstart)
 
 ## Web Apps on Containers
@@ -193,7 +214,7 @@ To build and deploy Azure Functions application, run:
 gradle azureFunctionsPackage
 gradle azureFunctionsDeploy
 ```
-Where `azureFunctionsPackage` is of type `DeployTask` and `AzureFunctionsDeploy` of type `DeployTask`. 
+Where `azureFunctionsPackage` is of type `DeployTask` and `AzureFunctionsDeploy` of type `DeployTask`.
 
 To verify function running, you can use `curl -X POST -d "Azure World" <Deployed Host URL>/api/hello`.
 
@@ -210,7 +231,7 @@ gradle azureFunctionsRun
 ```
 Where `azureFunctionsRun` is of type `RunTask`.
 
-[Source code for sample app](./samples/walkthrough) 
+[Source code for sample app](./samples/walkthrough)
 
 ## Azure Authentication settings
 To authenticate with Azure, device login can be used. To enable that, you need to sign in with Azure CLI first.
