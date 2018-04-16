@@ -28,7 +28,7 @@ uploadArchives {
 gradlePlugin {
     plugins {
         azureWebappPlugin {
-            id = 'com.microsoft.azure.azure-webapp-plugin'
+            id = 'com.microsoft.azure.azurewebapp'
             implementationClass = 'com.microsoft.azure.gradle.webapp.AzureWebappPlugin'
         }
     }
