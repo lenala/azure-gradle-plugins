@@ -1,9 +1,10 @@
-group 'com.microsoft.azure'
-version '1.0-SNAPSHOT'
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven'
+}
 
-apply plugin: 'java'
-apply plugin: 'maven'
-
+group = 'com.microsoft.azure'
+version = '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
@@ -12,34 +13,23 @@ repositories {
 }
 
 dependencies {
-    compile gradleApi()
     compile 'com.microsoft.azure:azure:1.7.0'
     compile 'commons-net:commons-net:3.6'
     compile 'commons-io:commons-io:2.2'
-    testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
 }
 
 uploadArchives {
     repositories {
-        mavenDeployer {
-            repository(url: uri('../../Users/elenla.REDMOND/.m2/repository'))
+        mavenLocal()
+    }
+}
+
+gradlePlugin {
+    plugins {
+        azureWebappPlugin {
+            id = 'com.microsoft.azure.azure-webapp-plugin'
+            implementationClass = 'com.microsoft.azure.gradle.webapp.AzureWebappPlugin'
         }
     }
-}
-
-task createClasspathManifest {
-    def outputDir = file("$buildDir/$name")
-
-    inputs.files sourceSets.main.runtimeClasspath
-    outputs.dir outputDir
-
-    doLast {
-        outputDir.mkdirs()
-        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
-    }
-}
-
-dependencies {
-    testRuntime files(createClasspathManifest)
 }
