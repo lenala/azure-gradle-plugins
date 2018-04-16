@@ -2,6 +2,7 @@ language: java
 sudo: required
 jdk:
 - oraclejdk8
+install: true
 script:
 - |-
   ./azure-webapp-gradle-plugin/gradlew install ;
