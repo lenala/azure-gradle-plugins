@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/lenala/azure-gradle-plugins.svg?style=flat-square&label=build&branch=master)](https://travis-ci.org/lenala/azure-gradle-plugins)
 # azure-gradle-plugins
 
 
