@@ -3,6 +3,4 @@ sudo: required
 jdk:
 - oraclejdk8
 before_install: cd azure-webapp-gradle-plugin
-script:
-- |-
-  ./azure-webapp-gradle-plugin/gradlew install ;
+install: true
