@@ -14,6 +14,7 @@ import com.microsoft.azure.management.appservice.WebApp.DefinitionStages.WithNew
 import com.microsoft.azure.management.resources.fluentcore.arm.models.GroupableResource.DefinitionStages.WithGroup;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.TaskExecutionException;
 
 public class WebAppUtils {
@@ -55,6 +56,8 @@ public class WebAppUtils {
         }
         final boolean isCustomRegistry = StringUtils.isNotEmpty(containerSettings.getRegistryUrl());
         final boolean isPrivate = StringUtils.isNotEmpty(containerSettings.getServerId());
+
+        Logging.getLogger(WebAppUtils.class).quiet("ServerId: " + containerSettings.getServerId() + " : " + System.getenv("SERVER_ID"));
 
         if (isCustomRegistry) {
             return isPrivate ? DockerImageType.PRIVATE_REGISTRY : DockerImageType.UNKNOWN;

@@ -13,7 +13,7 @@ import com.microsoft.azure.management.appservice.WebApp.Update;
 import org.gradle.api.GradleException;
 
 public class NullRuntimeHandlerImpl implements RuntimeHandler {
-    public static final String NO_RUNTIME_CONFIG = "No runtime stack is specified in build.gradle; " +
+    static final String NO_RUNTIME_CONFIG = "No runtime stack is specified in build.gradle; " +
             "use 'appServiceOnWindows', 'appServiceOnLinux' or 'containerSettings' to configure runtime stack.";
 
     @Override

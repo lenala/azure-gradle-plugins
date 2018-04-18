@@ -1,18 +1,20 @@
 plugins {
     id "com.microsoft.azure.azurewebapp"
 }
+def registryId = System.env.SERVER_ID
 
-def dockerImagePrefix = "elenaregistry.azurecr.io"
 def projectArtifactId = "dockerProject"
 version = "1.0-SNAPSHOT"
 
 azurewebapp {
-    resourceGroup = "myResourceGroup"
-    appName = "mynewwebapp"
+    resourceGroup = "myResourceGroup1"
+    appName = "mynewwebapp123456"
     pricingTier = "S1"
     containerSettings = {
-        imageName = dockerImagePrefix + "/" + projectArtifactId + ":" + version
-        registryUrl = "https://" + dockerImagePrefix
-        serverId = dockerImagePrefix
+        imageName = registryId + "/" + projectArtifactId + ":" + version
+        registryUrl = "https://" + registryId
+        serverId = registryId
+        username = System.env.SERVER_USERNAME
+        password = System.env.SERVER_PASSWORD
     }
 }

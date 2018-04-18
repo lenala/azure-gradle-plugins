@@ -48,6 +48,7 @@ public class HandlerFactoryImpl extends HandlerFactory {
         }
 
         final DockerImageType imageType = WebAppUtils.getDockerImageType(containerSettings);
+        task.getLogger().quiet("imageType: " + imageType);
         switch (imageType) {
             case PUBLIC_DOCKER_HUB:
                 return new PublicDockerHubRuntimeHandlerImpl(task);

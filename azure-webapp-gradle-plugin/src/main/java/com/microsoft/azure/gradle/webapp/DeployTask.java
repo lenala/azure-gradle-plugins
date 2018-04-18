@@ -163,7 +163,10 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
 
     @Override
     public String getAuthenticationSetting(String key) {
-        return (String) getProject().getProperties().get(key);
+        if (getProject().getProperties().get(key) != null) {
+            return (String) getProject().getProperties().get(key);
+        }
+        return System.getenv(key);
     }
 
     @Override

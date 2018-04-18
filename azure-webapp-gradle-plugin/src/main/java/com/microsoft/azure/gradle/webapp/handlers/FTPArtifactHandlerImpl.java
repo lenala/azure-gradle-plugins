@@ -41,7 +41,7 @@ public class FTPArtifactHandlerImpl implements ArtifactHandler {
         uploadDirectoryToFTP();
     }
 
-    protected void copyResourceToStageDirectory() throws IOException {
+    private void copyResourceToStageDirectory() throws IOException {
         String target = azureWebAppExtension.getTarget();
         if (target == null || target.isEmpty()) {
             target = project.getTasks().getByPath("war").getOutputs().getFiles().getAsPath();
