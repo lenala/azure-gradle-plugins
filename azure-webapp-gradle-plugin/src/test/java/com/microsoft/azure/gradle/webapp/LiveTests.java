@@ -5,8 +5,6 @@
  */
 package com.microsoft.azure.gradle.webapp;
 
-import com.microsoft.azure.credentials.AzureCliCredentials;
-import com.microsoft.azure.management.Azure;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.After;
@@ -27,7 +25,6 @@ public class LiveTests {
 
     @Test
     public void testDeployTask() throws IOException {
-        final Azure.Authenticated auth = Azure.configure().authenticate(AzureCliCredentials.create());
         BuildResult result = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .forwardOutput()
