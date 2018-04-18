@@ -8,8 +8,6 @@ package com.microsoft.azure.gradle.webapp.handlers;
 
 import com.microsoft.azure.gradle.webapp.AzureWebAppExtension;
 import com.microsoft.azure.gradle.webapp.DeployTask;
-import com.microsoft.azure.gradle.webapp.configuration.Server;
-import com.microsoft.azure.gradle.webapp.helpers.Utils;
 import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
 import com.microsoft.azure.management.appservice.WebApp;
@@ -17,7 +15,8 @@ import com.microsoft.azure.management.appservice.WebApp.DefinitionStages.WithCre
 import org.gradle.api.GradleException;
 
 public class PrivateDockerHubRuntimeHandlerImpl implements RuntimeHandler {
-    public static final String SERVER_ID_NOT_FOUND = "Server Id not found in gradle.properties. ServerId=";
+    private static final String SERVER_ID_NOT_FOUND = "Server Id not found in gradle.properties. ServerId=";
+    private static final String CREDENTIALS_NOT_FOUND = "Container registry credentials not found in containerSettings.";
 
     private DeployTask task;
     private AzureWebAppExtension extension;
@@ -30,14 +29,16 @@ public class PrivateDockerHubRuntimeHandlerImpl implements RuntimeHandler {
     @Override
     public WithCreate defineAppWithRuntime() throws Exception {
         final ContainerSettings containerSetting = extension.getContainerSettings();
-        final Server server = Utils.getServer(task.getProject(), containerSetting.getServerId());
-        if (server == null) {
+        if (containerSetting.getServerId() == null) {
             throw new GradleException(SERVER_ID_NOT_FOUND + containerSetting.getServerId());
+        }
+        if (containerSetting.getUsername() == null || containerSetting.getPassword() == null) {
+            throw new GradleException(CREDENTIALS_NOT_FOUND);
         }
         return WebAppUtils.defineApp(task)
                 .withNewLinuxPlan(extension.getPricingTier())
                 .withPrivateDockerHubImage(containerSetting.getImageName())
-                .withCredentials(server.getUsername(), server.getPassword());
+                .withCredentials(containerSetting.getUsername(), containerSetting.getPassword());
     }
 
     @Override
@@ -46,12 +47,14 @@ public class PrivateDockerHubRuntimeHandlerImpl implements RuntimeHandler {
         WebAppUtils.clearTags(app);
 
         final ContainerSettings containerSetting = extension.getContainerSettings();
-        final Server server = Utils.getServer(task.getProject(), containerSetting.getServerId());
-        if (server == null) {
+        if (containerSetting == null) {
             throw new GradleException(SERVER_ID_NOT_FOUND + containerSetting.getServerId());
+        }
+        if (containerSetting.getUsername() == null || containerSetting.getPassword() == null) {
+            throw new GradleException(CREDENTIALS_NOT_FOUND);
         }
         return app.update()
                 .withPrivateDockerHubImage(containerSetting.getImageName())
-                .withCredentials(server.getUsername(), server.getPassword());
+                .withCredentials(containerSetting.getUsername(), containerSetting.getPassword());
     }
 }

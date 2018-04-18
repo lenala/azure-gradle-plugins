@@ -16,6 +16,8 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
+import java.io.File;
+
 public class DeployTask extends DefaultTask implements AuthConfiguration {
     public static final String TASK_NAME = "azureWebappDeploy";
 
@@ -35,7 +37,7 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     private Azure azure;
     private AzureWebAppExtension azureWebAppExtension;
     private AzureAuthHelper azureAuthHelper;
-    protected DeploymentUtil util = new DeploymentUtil();
+    private DeploymentUtil util = new DeploymentUtil();
 
     public void setAzureWebAppExtension(AzureWebAppExtension azureWebAppExtension) {
         this.azureWebAppExtension = azureWebAppExtension;
@@ -165,7 +167,7 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     }
 
     @Override
-    public String getAuthFile() {
+    public File getAuthFile() {
         return azureWebAppExtension.getAuthFile();
     }
 

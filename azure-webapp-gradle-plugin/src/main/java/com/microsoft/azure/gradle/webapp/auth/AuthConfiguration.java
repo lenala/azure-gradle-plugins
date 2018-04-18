@@ -6,6 +6,8 @@
 
 package com.microsoft.azure.gradle.webapp.auth;
 
+import java.io.File;
+
 public interface AuthConfiguration {
 
     String getSubscriptionId();
@@ -16,5 +18,5 @@ public interface AuthConfiguration {
 
     String getAuthenticationSetting(String key);
 
-    String getAuthFile();
+    File getAuthFile();
 }

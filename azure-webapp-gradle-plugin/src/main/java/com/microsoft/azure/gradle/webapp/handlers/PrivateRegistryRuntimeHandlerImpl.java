@@ -10,15 +10,14 @@ import com.microsoft.azure.gradle.webapp.AzureWebAppExtension;
 import com.microsoft.azure.gradle.webapp.DeployTask;
 import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
-import com.microsoft.azure.gradle.webapp.helpers.Utils;
 import com.microsoft.azure.management.appservice.WebApp;
 import com.microsoft.azure.management.appservice.WebApp.DefinitionStages.WithCreate;
 import com.microsoft.azure.management.appservice.WebApp.Update;
 import org.gradle.api.GradleException;
-import com.microsoft.azure.gradle.webapp.configuration.Server;
 
 public class PrivateRegistryRuntimeHandlerImpl implements RuntimeHandler {
-    private static final String SERVER_ID_NOT_FOUND = "Server Id not found in gradle.properties. ServerId=";
+    private static final String SERVER_ID_NOT_FOUND = "Server Id not found in containerSettings.";
+    private static final String CREDENTIALS_NOT_FOUND = "Container registry credentials not found in containerSettings.";
 
     private DeployTask task;
     private AzureWebAppExtension extension;
@@ -30,15 +29,17 @@ public class PrivateRegistryRuntimeHandlerImpl implements RuntimeHandler {
 
     @Override
     public WithCreate defineAppWithRuntime() throws Exception {
-        final ContainerSettings containerSetting = extension.getContainerSettings();
-        final Server server = Utils.getServer(task.getProject(), containerSetting.getServerId());
-        if (server == null) {
-            throw new GradleException(SERVER_ID_NOT_FOUND + containerSetting.getServerId());
+        final ContainerSettings containerSettings = extension.getContainerSettings();
+        if (containerSettings.getServerId() == null) {
+            throw new GradleException(SERVER_ID_NOT_FOUND + containerSettings.getServerId());
+        }
+        if (containerSettings.getUsername() == null || containerSettings.getPassword() == null) {
+            throw new GradleException(CREDENTIALS_NOT_FOUND);
         }
         return WebAppUtils.defineApp(task)
                 .withNewLinuxPlan(extension.getPricingTier())
-                .withPrivateRegistryImage(containerSetting.getImageName(), containerSetting.getRegistryUrl())
-                .withCredentials(server.getUsername(), server.getPassword());
+                .withPrivateRegistryImage(containerSettings.getImageName(), containerSettings.getRegistryUrl())
+                .withCredentials(extension.getContainerSettings().getUsername(), extension.getContainerSettings().getPassword());
     }
 
     @Override
@@ -46,12 +47,14 @@ public class PrivateRegistryRuntimeHandlerImpl implements RuntimeHandler {
         WebAppUtils.assureLinuxWebApp(app);
         WebAppUtils.clearTags(app);
         final ContainerSettings containerSettings = extension.getContainerSettings();
-        final Server server = Utils.getServer(task.getProject(), containerSettings.getServerId());
-        if (server == null) {
+        if (containerSettings.getServerId() == null) {
             throw new GradleException(SERVER_ID_NOT_FOUND + containerSettings.getServerId());
+        }
+        if (containerSettings.getUsername() == null || containerSettings.getPassword() == null) {
+            throw new GradleException(CREDENTIALS_NOT_FOUND);
         }
         return app.update()
                 .withPrivateRegistryImage(containerSettings.getImageName(), containerSettings.getRegistryUrl())
-                .withCredentials(server.getUsername(), server.getPassword());
+                .withCredentials(containerSettings.getUsername(), containerSettings.getPassword());
     }
 }

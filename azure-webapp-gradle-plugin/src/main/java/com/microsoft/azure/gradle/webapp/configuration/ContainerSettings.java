@@ -34,6 +34,14 @@ public class ContainerSettings {
     @Optional
     private String serverId;
 
+    @Input
+    @Optional
+    private String username;
+
+    @Input
+    @Optional
+    private String password;
+
     /**
      * Private registry URL.
      */
@@ -45,30 +53,25 @@ public class ContainerSettings {
         return imageName;
     }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
-
     public String getStartUpFile() {
         return startUpFile;
-    }
-
-    public void setStartUpFile(String startUpFile) {
-        this.startUpFile = startUpFile;
     }
 
     public String getServerId() {
         return serverId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
-    }
-
     public String getRegistryUrl() {
         return registryUrl;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public boolean isEmpty() {
         return StringUtils.isEmpty(getImageName()) &&

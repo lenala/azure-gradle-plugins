@@ -12,7 +12,7 @@ import static com.microsoft.azure.gradle.webapp.AzureWebAppExtension.WEBAPP_EXTE
 
 public class AzureWebappPlugin implements Plugin<Project> {
     public void apply(Project project) {
-        AzureWebAppExtension azureWebAppExtension = new AzureWebAppExtension();
+        AzureWebAppExtension azureWebAppExtension = new AzureWebAppExtension(project);
         project.getExtensions().add(WEBAPP_EXTENSION_NAME, azureWebAppExtension);
         project.getTasks().create(DeployTask.TASK_NAME, DeployTask.class, (task) -> {
             task.setAzureWebAppExtension(azureWebAppExtension);

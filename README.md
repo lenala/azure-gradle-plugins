@@ -140,6 +140,8 @@ azurewebapp {
     containerSettings = {
         imageName = <image_name>
         serverId = <server_id>
+        username = <registry_username>
+        password = <registry_password>
         registryUrl = "https://" + serverId
     }
 }

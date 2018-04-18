@@ -82,10 +82,12 @@ azurewebapp {
     resourceGroup = "rg5"
     appName = "mynewwebapplena18"
     pricingTier = "S2"
-    authFile = 'C:/stuff/my.azureauth'
+    authFile = file("C:/stuff/my2.azureauth")
     containerSettings = {
         imageName = dockerImage
         serverId = project.property('serverId')
+        username = project.property('serverUsername')
+        password = project.property('serverPassword')
         registryUrl = "https://" + serverId
     }
 }

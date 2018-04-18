@@ -32,9 +32,9 @@ public class DeployTaskTaskTest {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .forwardOutput()
-                .withArguments("deploy")
+                .withArguments(DeployTask.TASK_NAME)
                 .withPluginClasspath()
                 .build();
-        assertEquals(result.task(":deploy").getOutcome(), SUCCESS);
+        assertEquals(result.task(":" + DeployTask.TASK_NAME).getOutcome(), SUCCESS);
     }
 }

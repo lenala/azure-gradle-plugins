@@ -10,16 +10,16 @@ import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnWindows;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
 import com.microsoft.azure.gradle.webapp.configuration.DeploymentType;
 import com.microsoft.azure.gradle.webapp.model.PricingTierEnum;
-import com.microsoft.azure.management.appservice.JavaVersion;
 import com.microsoft.azure.management.appservice.PricingTier;
-import com.microsoft.azure.management.appservice.WebContainer;
 import groovy.lang.Closure;
-import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.Input;
 
+import java.io.File;
+
 public class AzureWebAppExtension {
     public static final String WEBAPP_EXTENSION_NAME = "azurewebapp";
+    private final Project project;
     @Input
     private String appName;
     @Input
@@ -33,7 +33,7 @@ public class AzureWebAppExtension {
     @Input
     private boolean stopAppDuringDeployment;
     @Input
-    private String authFile;
+    private File authFile;
     @Input
     private DeploymentType deploymentType = DeploymentType.FTP;
 
@@ -43,25 +43,23 @@ public class AzureWebAppExtension {
 
     private ContainerSettings containerSettings;
 
+    public AzureWebAppExtension(Project project) {
+        this.project = project;
+    }
+
     public void setContainerSettings(Closure closure) {
         containerSettings = new ContainerSettings();
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        closure.setDelegate(containerSettings);
-        closure.run();
+        project.configure(containerSettings, closure);
     }
 
     public void setAppServiceOnWindows(Closure closure) {
         appServiceOnWindows = new AppServiceOnWindows();
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        closure.setDelegate(appServiceOnWindows);
-        closure.run();
+        project.configure(appServiceOnWindows, closure);
     }
 
     public void setAppServiceOnLinux(Closure closure) {
         appServiceOnLinux = new AppServiceOnLinux();
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        closure.setDelegate(appServiceOnLinux);
-        closure.run();
+        project.configure(appServiceOnLinux, closure);
     }
 
     public ContainerSettings getContainerSettings() {
@@ -100,7 +98,7 @@ public class AzureWebAppExtension {
         return stopAppDuringDeployment;
     }
 
-    public String getAuthFile() {
+    public File getAuthFile() {
         return authFile;
     }
 
