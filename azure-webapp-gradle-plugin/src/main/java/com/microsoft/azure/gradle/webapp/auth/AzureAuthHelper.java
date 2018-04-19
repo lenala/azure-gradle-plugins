@@ -110,7 +110,7 @@ public class AzureAuthHelper {
 
     protected Authenticated getAuthObj() {
         Authenticated auth;
-        // check if project has Azure authentication settings in build.gradle or gradle.properties
+        // check if project has Azure authentication settings in build.gradle or gradle.properties or in environment variables
         boolean hasAuthSetting = config.hasAuthenticationSettings();
         if (hasAuthSetting) {
             auth = getAuthObjFromConfiguration(config);

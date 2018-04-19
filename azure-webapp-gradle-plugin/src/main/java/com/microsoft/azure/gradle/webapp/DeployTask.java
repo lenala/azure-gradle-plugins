@@ -158,7 +158,8 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
 
     @Override
     public boolean hasAuthenticationSettings() {
-        return getProject().getProperties().containsKey(AzureAuthHelper.CLIENT_ID) || azureWebAppExtension.getAuthFile() != null;
+        return getProject().getProperties().containsKey(AzureAuthHelper.CLIENT_ID) || azureWebAppExtension.getAuthFile() != null
+                || System.getenv(AzureAuthHelper.CLIENT_ID) != null;
     }
 
     @Override
