@@ -44,8 +44,6 @@ public class PrivateDockerHubRuntimeHandlerImpl implements RuntimeHandler {
     @Override
     public WebApp.Update updateAppRuntime(final WebApp app) throws Exception {
         WebAppUtils.assureLinuxWebApp(app);
-        WebAppUtils.clearTags(app);
-
         final ContainerSettings containerSetting = extension.getContainerSettings();
         if (containerSetting == null) {
             throw new GradleException(SERVER_ID_NOT_FOUND + containerSetting.getServerId());

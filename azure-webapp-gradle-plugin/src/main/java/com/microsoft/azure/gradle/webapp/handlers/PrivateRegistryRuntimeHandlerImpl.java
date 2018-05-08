@@ -45,7 +45,6 @@ public class PrivateRegistryRuntimeHandlerImpl implements RuntimeHandler {
     @Override
     public Update updateAppRuntime(final WebApp app) throws Exception {
         WebAppUtils.assureLinuxWebApp(app);
-        WebAppUtils.clearTags(app);
         final ContainerSettings containerSettings = extension.getContainerSettings();
         if (containerSettings.getServerId() == null) {
             throw new GradleException(SERVER_ID_NOT_FOUND + containerSettings.getServerId());

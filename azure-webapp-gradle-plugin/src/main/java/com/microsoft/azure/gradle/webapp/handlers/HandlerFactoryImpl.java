@@ -44,7 +44,7 @@ public class HandlerFactoryImpl extends HandlerFactory {
         }
 
         if (appServiceOnLinux != null) {
-            return new BuiltInImageRuntimeHandlerImpl(task);
+            return new LinuxRuntimeHandlerImpl(task);
         }
 
         final DockerImageType imageType = WebAppUtils.getDockerImageType(containerSettings);

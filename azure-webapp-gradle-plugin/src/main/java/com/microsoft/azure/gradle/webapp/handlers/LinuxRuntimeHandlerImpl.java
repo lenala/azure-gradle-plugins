@@ -14,7 +14,7 @@ import com.microsoft.azure.management.appservice.WebApp;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
 
-public class BuiltInImageRuntimeHandlerImpl implements RuntimeHandler {
+public class LinuxRuntimeHandlerImpl implements RuntimeHandler {
 
     private static final String NOT_SUPPORTED_IMAGE = "The image: '%s' is not supported.";
     private static final String IMAGE_NOT_GIVEN = "Image name is not specified.";
@@ -22,7 +22,7 @@ public class BuiltInImageRuntimeHandlerImpl implements RuntimeHandler {
     private DeployTask task;
     private AzureWebAppExtension extension;
 
-    public BuiltInImageRuntimeHandlerImpl(final DeployTask task) {
+    public LinuxRuntimeHandlerImpl(final DeployTask task) {
         this.task = task;
         this.extension = task.getAzureWebAppExtension();
     }
