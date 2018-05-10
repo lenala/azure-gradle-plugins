@@ -63,16 +63,18 @@ gradlew.bat azureWebappDeploy
 
 ## Common settings
 
-Name | Value
----|---
-deploymentType | Deployment type - one of {FTP, WEBDEPLOY, WARDEPLOY}. Optional, default value is FTP.
-resourceGroup | Azure resource group to create Web App
-appName | Web App name
-region | Azure region. Optional, default is WEST_US
-pricingTier | Pricing tier
-authFile | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication-settings)
-target | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
-stopAppDuringDeployment | Specifies whether to stop Web App during deployment. Optional, default is false
+Name | Required | Value
+---|---|---
+deploymentType | false | Deployment type - one of {FTP, WARDEPLOY}. Optional, default value is WARDEPLOY.
+resourceGroup | true | Azure resource group to create Web App
+appName | true | Web App name
+region | false | Azure region. Optional, default is WEST_US2
+appServicePlanResourceGroup | false | Specifies the resource group of the existing App Service Plan when you do not want to create a new one. If this setting is not specified, plugin will use the value defined in <code>resourceGroup</code>
+appServicePlanName | false | Specifies the name of the existing App Service Plan when you do not want to create a new one.
+pricingTier | false | 	Specifies the pricing tier for your Web App; the default value is S1.
+authFile | false | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication-settings)
+target | false | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
+stopAppDuringDeployment | false | Specifies whether to stop Web App during deployment. Optional, default is false
 
 # 4 types of deployment are supported:
 

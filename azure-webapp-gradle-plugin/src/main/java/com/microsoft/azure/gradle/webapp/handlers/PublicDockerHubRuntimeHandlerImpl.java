@@ -10,6 +10,8 @@ import com.microsoft.azure.gradle.webapp.AzureWebAppExtension;
 import com.microsoft.azure.gradle.webapp.DeployTask;
 import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
+import com.microsoft.azure.management.appservice.AppServicePlan;
+import com.microsoft.azure.management.appservice.OperatingSystem;
 import com.microsoft.azure.management.appservice.WebApp;
 import com.microsoft.azure.management.appservice.WebApp.DefinitionStages.WithCreate;
 import com.microsoft.azure.management.appservice.WebApp.Update;
@@ -25,8 +27,9 @@ public class PublicDockerHubRuntimeHandlerImpl implements RuntimeHandler {
 
     @Override
     public WithCreate defineAppWithRuntime() throws Exception {
-        return WebAppUtils.defineApp(task)
-                .withNewLinuxPlan(extension.getPricingTier())
+        final AppServicePlan plan = WebAppUtils.createOrGetAppServicePlan(task, OperatingSystem.LINUX);
+
+        return WebAppUtils.defineLinuxApp(task, plan)
                 .withPublicDockerHubImage(extension.getContainerSettings().getImageName());
     }
 

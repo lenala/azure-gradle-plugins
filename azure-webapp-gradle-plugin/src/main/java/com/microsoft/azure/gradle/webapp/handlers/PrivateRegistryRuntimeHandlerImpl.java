@@ -10,6 +10,8 @@ import com.microsoft.azure.gradle.webapp.AzureWebAppExtension;
 import com.microsoft.azure.gradle.webapp.DeployTask;
 import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
 import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
+import com.microsoft.azure.management.appservice.AppServicePlan;
+import com.microsoft.azure.management.appservice.OperatingSystem;
 import com.microsoft.azure.management.appservice.WebApp;
 import com.microsoft.azure.management.appservice.WebApp.DefinitionStages.WithCreate;
 import com.microsoft.azure.management.appservice.WebApp.Update;
@@ -36,10 +38,11 @@ public class PrivateRegistryRuntimeHandlerImpl implements RuntimeHandler {
         if (containerSettings.getUsername() == null || containerSettings.getPassword() == null) {
             throw new GradleException(CREDENTIALS_NOT_FOUND);
         }
-        return WebAppUtils.defineApp(task)
-                .withNewLinuxPlan(extension.getPricingTier())
+
+        final AppServicePlan plan = WebAppUtils.createOrGetAppServicePlan(task, OperatingSystem.LINUX);
+        return WebAppUtils.defineLinuxApp(task, plan)
                 .withPrivateRegistryImage(containerSettings.getImageName(), containerSettings.getRegistryUrl())
-                .withCredentials(extension.getContainerSettings().getUsername(), extension.getContainerSettings().getPassword());
+                .withCredentials(containerSettings.getUsername(), containerSettings.getPassword());
     }
 
     @Override

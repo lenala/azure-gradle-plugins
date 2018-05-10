@@ -25,7 +25,11 @@ public class AzureWebAppExtension {
     @Input
     private String resourceGroup;
     @Input
-    String region = "westus2";
+    private String region = "westus2";
+    @Input
+    private String appServicePlanResourceGroup;
+    @Input
+    private String appServicePlanName;
     @Input
     private PricingTierEnum pricingTier;
     @Input
@@ -35,7 +39,7 @@ public class AzureWebAppExtension {
     @Input
     private File authFile;
     @Input
-    private DeploymentType deploymentType = DeploymentType.FTP;
+    private DeploymentType deploymentType = DeploymentType.WARDEPLOY;
 
     private AppServiceOnLinux appServiceOnLinux;
 
@@ -104,5 +108,13 @@ public class AzureWebAppExtension {
 
     public DeploymentType getDeploymentType() {
         return deploymentType;
+    }
+
+    public String getAppServicePlanResourceGroup() {
+        return appServicePlanResourceGroup;
+    }
+
+    public String getAppServicePlanName() {
+        return appServicePlanName;
     }
 }

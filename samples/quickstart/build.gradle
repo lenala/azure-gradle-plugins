@@ -35,7 +35,7 @@ gretty {
 //    resourceGroup = "rg1"
 //    appName = "webapplena7"
 //    pricingTier = "S2"
-//    authFile = 'C:/stuff/my.azureauth'
+//    authFile = file('C:/stuff/my.azureauth')
 //    target = 'C:\\stuff\\azure-gradle-plugins.4\\samples\\quickstart\\build\\libs\\quickstart.war'
 //    appServiceOnLinux = {
 //        runtimeStack = 'TOMCAT 9.0-jre8'
@@ -49,7 +49,7 @@ azurewebapp {
     resourceGroup = "rg1"
     appName = "webapplena13"
     pricingTier = "S2"
-    authFile = 'C:/stuff/my.azureauth'
+    authFile = file('C:/stuff/my.azureauth')
     region = 'southcentralus'
     target = 'C:\\stuff\\azure-gradle-plugins.4\\samples\\quickstart\\build\\libs\\quickstart.war'
     appServiceOnWindows = {
