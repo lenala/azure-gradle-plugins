@@ -35,6 +35,6 @@ public class LinuxRuntimeHandlerImpl implements RuntimeHandler {
     @Override
     public WebApp.Update updateAppRuntime(WebApp app) throws Exception {
         WebAppUtils.assureLinuxWebApp(app);
-        return app.update().withBuiltInImage(getLinuxRunTimeStack(extension.getContainerSettings().getImageName()));
+        return app.update().withBuiltInImage(getLinuxRunTimeStack(extension.getAppServiceOnLinux().getRuntimeStack()));
     }
 }

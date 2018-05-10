@@ -5,9 +5,11 @@
  */
 package com.microsoft.azure.gradle.webapp;
 
+import org.gradle.api.tasks.Input;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,6 +25,7 @@ public class LiveTests {
 //    File projectDir = new File(".\\testProjects\\simpleProject");
     private File projectDir = new File(".\\testProjects\\dockerProject");
 
+    @Ignore
     @Test
     public void testDeployTask() throws IOException {
         BuildResult result = GradleRunner.create()
