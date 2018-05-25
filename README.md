@@ -126,7 +126,7 @@ azurewebapp {
     }
 }
 ```
-[Usage example](./samples/quickstart)
+[Usage example](./samples/todo-app-java-on-azure.appservice-on-linux
 
 ## Web Apps on Containers
 
