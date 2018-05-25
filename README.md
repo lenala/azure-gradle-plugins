@@ -102,7 +102,7 @@ azurewebapp {
     }
 }
 ```
-[Usage example](./samples/quickstart)
+[Usage example](./samples/todo-app-java-on-azure.appservice-on-linux)
 
 ## Web App on Linux
 
