@@ -126,7 +126,7 @@ azurewebapp {
     }
 }
 ```
-[Sample ToDo App](https://github.com/Microsoft/todo-app-java-on-azure/tree/tomcat-on-azure-app-service-linux)
+[Sample ToDo App](https://github.com/Microsoft/todo-app-java-on-azure/tree/tomcat-on-azure-app-service-linux-gradle)
 
 ## Web Apps on Containers
 
