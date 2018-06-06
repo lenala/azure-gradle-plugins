@@ -13,11 +13,11 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile 'com.microsoft.azure:azure:1.6.0'
+    compile 'com.microsoft.azure:azure:1.11.0'
     compile 'com.microsoft.azure:azure-storage:5.4.0'
     compile 'commons-net:commons-net:3.6'
     compile 'commons-io:commons-io:2.2'
-    compile 'com.microsoft.azure:azure-functions-java-core:[1.0.0-beta-1,1.0.0)'
+    compile 'com.microsoft.azure:azure-functions-java-core:1.0.0-beta-3'
     compile 'org.reflections:reflections:0.9.11'
     compile 'org.zeroturnaround:zt-zip:1.12'
     testCompile gradleTestKit()
