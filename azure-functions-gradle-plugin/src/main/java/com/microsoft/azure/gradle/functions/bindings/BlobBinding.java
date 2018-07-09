@@ -8,9 +8,9 @@ package com.microsoft.azure.gradle.functions.bindings;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.microsoft.azure.serverless.functions.annotation.BlobInput;
-import com.microsoft.azure.serverless.functions.annotation.BlobOutput;
-import com.microsoft.azure.serverless.functions.annotation.BlobTrigger;
+import com.microsoft.azure.functions.annotation.BlobInput;
+import com.microsoft.azure.functions.annotation.BlobOutput;
+import com.microsoft.azure.functions.annotation.BlobTrigger;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BlobBinding extends StorageBaseBinding {

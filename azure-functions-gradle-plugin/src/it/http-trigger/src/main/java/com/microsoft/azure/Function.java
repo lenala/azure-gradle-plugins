@@ -7,8 +7,8 @@
 package com.microsoft.azure;
 
 import java.util.*;
-import com.microsoft.azure.serverless.functions.annotation.*;
-import com.microsoft.azure.serverless.functions.*;
+import com.microsoft.azure.functions.annotation.*;
+import com.microsoft.azure.functions.*;
 
 /**
  * Azure Functions with HTTP Trigger.

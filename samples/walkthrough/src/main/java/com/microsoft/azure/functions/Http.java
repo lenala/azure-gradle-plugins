@@ -1,7 +1,7 @@
 package com.microsoft.azure.functions;
 
-import com.microsoft.azure.serverless.functions.annotation.*;
-import com.microsoft.azure.serverless.functions.ExecutionContext;
+import com.microsoft.azure.functions.annotation.*;
+import com.microsoft.azure.functions.ExecutionContext;
 
 /**
  * Hello function with HTTP Trigger.

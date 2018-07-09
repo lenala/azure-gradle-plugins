@@ -3,8 +3,8 @@ package com.microsoft.azure;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import com.microsoft.azure.serverless.functions.annotation.*;
-import com.microsoft.azure.serverless.functions.*;
+import com.microsoft.azure.functions.annotation.*;
+import com.microsoft.azure.functions.*;
 import com.microsoft.itlib.AbstractSigner;
 import com.microsoft.itlib.ConcreteSigner;
 

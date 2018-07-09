@@ -1,16 +1,16 @@
 buildscript {
     ext {
-        functionsCoreVersion     = "1.0.0-beta-2"
+        functionsCoreVersion     = "1.0.0-beta-4"
     }
     repositories {
         mavenCentral()
         jcenter()
         maven {
-            url uri('/Users/farlen/.m2/repository')
+            url uri('C:/Users/elenla.REDMOND/.m2/repository')
         }
     }
     dependencies {
-        classpath("com.microsoft.azure:azure-functions-java-core:1.0.0-beta-2")
+        classpath("com.microsoft.azure.functions:azure-functions-java-library:1.0.0-beta-4")
         classpath group: 'com.microsoft.azure', name: 'azure-functions-gradle-plugin',
                 version: '1.0-SNAPSHOT'
     }
@@ -23,21 +23,21 @@ apply plugin: 'com.microsoft.azure.azurefunctions'
 import com.microsoft.azure.gradle.functions.*;
 
 dependencies {
-    compile 'com.microsoft.azure:azure-functions-java-core:1.0.0-beta-2'
+    compile 'com.microsoft.azure.functions:azure-functions-java-library:1.0.0-beta-4'
 }
 
 version = 'v0.15'
 
 description = "walkthrough-functions-app"
 
-def functionAppName = "lenaFunctionApp11223344"
+def functionAppName = "lenaFunctionApp112233445"
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
 
 azurefunctions {
-    authFile = '/Users/farlen/stuff/my.azureauth'
+    authFile = 'C:/stuff/my3.azureauth'
 }
 
 task azureFunctionsPackage(type: PackageTask) {
