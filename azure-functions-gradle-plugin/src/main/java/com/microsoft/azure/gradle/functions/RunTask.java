@@ -11,7 +11,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.gradle.process.internal.DefaultExecAction;
+import org.gradle.process.internal.DefaultExecActionFactory;
+import org.gradle.process.internal.ExecAction;
 
 import java.io.File;
 import java.io.InputStream;
@@ -155,7 +156,7 @@ public class RunTask  extends FunctionsTask {
                               final String errorMessage) throws Exception {
         getLogger().quiet("Executing command: " + StringUtils.join(command, " "));
 
-        DefaultExecAction action = new DefaultExecAction(getServices().get(FileResolver.class));
+        ExecAction action = new DefaultExecActionFactory(getServices().get(FileResolver.class)).newExecAction();
         action.setCommandLine(command);
         action.execute();
 //        final ProcessBuilder.Redirect redirect = getStdoutRedirect(showStdout);
