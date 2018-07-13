@@ -39,6 +39,7 @@ public class PackageTask extends FunctionsTask {
     private static final String SAVE_FUNCTION_JSON = "Starting processing function: ";
     private static final String SAVE_SUCCESS = "Successfully saved to ";
     private static final String COPY_JARS = "Step 6 of 6: Copying JARs to staging directory ";
+    private static final String COPY_HOST_JSON = "Step 4 of 6: Copying existing host.json";
     private static final String COPY_SUCCESS = "Copied successfully.";
     private static final String BUILD_SUCCESS = "Successfully built Azure Functions.";
 
@@ -58,7 +59,7 @@ public class PackageTask extends FunctionsTask {
 
             final ObjectWriter objectWriter = getObjectWriter();
 
-            writeEmptyHostJsonFile(objectWriter);
+            writeHostJsonFile(objectWriter);
 
             copyLocalSettingsJson();
 
@@ -155,11 +156,19 @@ public class PackageTask extends FunctionsTask {
         getLogger().quiet(SAVE_SUCCESS + functionJsonFile.getAbsolutePath());
     }
 
-    private void writeEmptyHostJsonFile(final ObjectWriter objectWriter) throws IOException {
-        getLogger().quiet(SAVE_HOST_JSON);
-        final File hostJsonFile = Paths.get(getDeploymentStageDirectory(), HOST_JSON).toFile();
-        writeObjectToFile(objectWriter, new Object(), hostJsonFile);
-        getLogger().quiet(SAVE_SUCCESS + hostJsonFile.getAbsolutePath());
+    private void writeHostJsonFile(final ObjectWriter objectWriter) throws IOException {
+        final File srcHostJsonFile = new File(getProject().getProjectDir().getAbsolutePath() + "/host.json");
+        final File destHostJsonFile = Paths.get(getDeploymentStageDirectory(), HOST_JSON).toFile();
+
+        if (srcHostJsonFile.exists()) {
+            getLogger().quiet(COPY_HOST_JSON);
+            FileUtils.copyFile(srcHostJsonFile, destHostJsonFile);
+            getLogger().quiet(COPY_SUCCESS);
+        } else {
+            getLogger().quiet(SAVE_HOST_JSON);
+            writeObjectToFile(objectWriter, new Object(), destHostJsonFile);
+            getLogger().quiet(SAVE_SUCCESS + destHostJsonFile.getAbsolutePath());
+        }
     }
 
     private void writeObjectToFile(final ObjectWriter objectWriter, final Object object, final File targetFile)
