@@ -7,60 +7,51 @@
 package com.microsoft.azure.gradle.webapp.handlers;
 
 import com.microsoft.azure.gradle.webapp.DeployTask;
-import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnLinux;
-import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnWindows;
-import com.microsoft.azure.gradle.webapp.configuration.DeploymentType;
-import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
-import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
+import com.microsoft.azure.gradle.webapp.configuration.AppService;
+import com.microsoft.azure.gradle.webapp.configuration.AppServiceType;
+import com.microsoft.azure.gradle.webapp.configuration.Deployment;
 import com.microsoft.azure.gradle.webapp.configuration.DockerImageType;
+import com.microsoft.azure.gradle.webapp.helpers.WebAppUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 
-public class HandlerFactoryImpl extends HandlerFactory {
-    private static final String RUNTIME_CONFIG_CONFLICT = "'appServiceOnWindows' is for Web App on Windows; " +
-            "'appServiceOnLinux' is for Web App on Linux; " +
-            "'containerSettings' is for Web App for Containers; only one can be specified at the same time.";
-    private static final String IMAGE_NAME_MISSING = "'imageName' not found within 'containerSettings'.";
+import static com.microsoft.azure.gradle.webapp.helpers.CommonStringTemplates.APP_SERVICE_PROPERTY_MISSING_TEMPLATE;
+import static com.microsoft.azure.gradle.webapp.helpers.CommonStringTemplates.PROPERTY_MISSING_TEMPLATE;
+import static com.microsoft.azure.gradle.webapp.helpers.CommonStringTemplates.UNKNOWN_VALUE_TEMPLATE;
 
+public class HandlerFactoryImpl extends HandlerFactory {
     @Override
     public RuntimeHandler getRuntimeHandler(final DeployTask task) throws GradleException {
-        AppServiceOnWindows appServiceOnWindows = task.getAzureWebAppExtension().getAppServiceOnWindows();
-
-        AppServiceOnLinux appServiceOnLinux = task.getAzureWebAppExtension().getAppServiceOnLinux();
-        final ContainerSettings containerSettings = task.getAzureWebAppExtension().getContainerSettings();
-        // No configuration is specified
-        if (appServiceOnLinux == null && appServiceOnWindows == null && containerSettings == null ) {
+        AppService appService = task.getAzureWebAppExtension().getAppService();
+        if (appService == null) {
             return new NullRuntimeHandlerImpl();
         }
 
-        // More than one configuration specified
-        if ((appServiceOnLinux != null && containerSettings != null) || (containerSettings != null && appServiceOnWindows != null) ||
-                (appServiceOnLinux != null && appServiceOnWindows != null))  {
-            throw new GradleException(RUNTIME_CONFIG_CONFLICT);
+        if (appService.getType() == AppServiceType.WINDOWS) {
+            return new WindowsRuntimeHandlerImpl(task);
         }
 
-        if (appServiceOnWindows != null) {
-            return new JavaRuntimeHandlerImpl(task);
-        }
-
-        if (appServiceOnLinux != null) {
+        if (appService.getType() == AppServiceType.LINUX) {
             return new LinuxRuntimeHandlerImpl(task);
         }
 
-        final DockerImageType imageType = WebAppUtils.getDockerImageType(containerSettings);
-        task.getLogger().quiet("imageType: " + imageType);
-        switch (imageType) {
-            case PUBLIC_DOCKER_HUB:
-                return new PublicDockerHubRuntimeHandlerImpl(task);
-            case PRIVATE_DOCKER_HUB:
-                return new PrivateDockerHubRuntimeHandlerImpl(task);
-            case PRIVATE_REGISTRY:
-                return new PrivateRegistryRuntimeHandlerImpl(task);
-            case NONE:
-                throw new GradleException(IMAGE_NAME_MISSING);
+        if (appService.getType() == AppServiceType.DOCKER) {
+            final DockerImageType imageType = WebAppUtils.getDockerImageTypeFromName(appService);
+            task.getLogger().quiet("imageType: " + imageType);
+            switch (imageType) {
+                case PUBLIC_DOCKER_HUB:
+                    return new PublicDockerHubRuntimeHandlerImpl(task);
+                case PRIVATE_DOCKER_HUB:
+                    return new PrivateDockerHubRuntimeHandlerImpl(task);
+                case PRIVATE_REGISTRY:
+                    return new PrivateRegistryRuntimeHandlerImpl(task);
+                case NONE:
+                default:
+                    throw new GradleException(
+                            String.format(APP_SERVICE_PROPERTY_MISSING_TEMPLATE, "appService.imageName", "DOCKER"));
+            }
         }
-
-        throw new GradleException(NullRuntimeHandlerImpl.NO_RUNTIME_CONFIG);
+        throw new GradleException(String.format(UNKNOWN_VALUE_TEMPLATE, "appService.type"));
     }
 
     @Override
@@ -70,13 +61,23 @@ public class HandlerFactoryImpl extends HandlerFactory {
 
     @Override
     public ArtifactHandler getArtifactHandler(final DeployTask task) throws GradleException {
-        if (DeploymentType.WARDEPLOY.equals(task.getAzureWebAppExtension().getDeploymentType())) {
-            return new WarDeployHandlerImpl(task);
+        Deployment deployment = task.getAzureWebAppExtension().getDeployment();
+        if (deployment == null) {
+            task.getLogger().quiet("No deployment configured, exit.");
+            return null;
         }
-//        if (task.getAzureWebAppExtension().getPackageUri() != null) {
-//            return new WebDeployHandlerImpl(task);
-//        } else {
-            return new FTPArtifactHandlerImpl(task.getProject());
-//        }
+        switch (deployment.getType()) {
+            case NONE:
+                throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "deployment.type"));
+            case UNKNOWN:
+                throw new GradleException(String.format(UNKNOWN_VALUE_TEMPLATE, "deployment.type"));
+            case WAR:
+                return new WarArtifactHandlerImpl(task);
+            case ZIP:
+                return new ZipArtifactHandlerImpl(task);
+            case FTP:
+            default:
+                return new FTPArtifactHandlerImpl(task);
+        }
     }
 }

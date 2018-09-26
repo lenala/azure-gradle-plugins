@@ -3,52 +3,52 @@
  * Licensed under the MIT License. See License.txt in the project root for
  * license information.
  */
+
 package com.microsoft.azure.gradle.webapp.handlers;
 
 import com.google.common.io.Files;
 import com.microsoft.azure.gradle.webapp.DeployTask;
+import com.microsoft.azure.gradle.webapp.configuration.DeployTarget;
+import com.microsoft.azure.gradle.webapp.configuration.Deployment;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
 
 import java.io.File;
 
-public class WarDeployHandlerImpl implements ArtifactHandler {
+public class WarArtifactHandlerImpl implements ArtifactHandler {
     private static final String FILE_IS_NOT_WAR = "The deployment file is not a war typed file.";
     private static final String FIND_WAR_FILE_FAIL = "Failed to find the war file: '%s'";
     private static final int DEFAULT_MAX_RETRY_TIMES = 3;
-    private static final String UPLOAD_FAILURE = "Failed to deploy the war file to server, retrying immediately (%d/%d)";
+    private static final String UPLOAD_FAILURE =
+            "Failed to deploy the war file to server, retrying immediately (%d/%d)";
 
     private DeployTask task;
 
-    public WarDeployHandlerImpl(final DeployTask task) {
+    public WarArtifactHandlerImpl(final DeployTask task) {
         this.task = task;
     }
 
     @Override
-    public void publish() throws GradleException {
-        String target = task.getAzureWebAppExtension().getTarget();
-        if (target == null || target.isEmpty()) {
-            target = task.getProject().getTasks().getByPath("war").getOutputs().getFiles().getAsPath();
+    public void publish(DeployTarget target) throws GradleException {
+        Deployment deployment = task.getAzureWebAppExtension().getDeployment();
+        if (deployment == null) {
+            return;
+        }
+        String warFile = deployment.getWarFile();
+        if (StringUtils.isEmpty(warFile)) {
+            warFile = task.getProject().getTasks().getByPath("war").getOutputs().getFiles().getAsPath();
         }
 
-        File targetFile = new File(target);
+        File targetFile = new File(warFile);
         assureWarFileExisted(targetFile);
 
-        String urlPath;
-        if (task.getAzureWebAppExtension().getAppServiceOnLinux() != null) {
-            urlPath = task.getAzureWebAppExtension().getAppServiceOnLinux().getUrlPath();
-        } else if (task.getAzureWebAppExtension().getAppServiceOnWindows() != null) {
-            urlPath = task.getAzureWebAppExtension().getAppServiceOnWindows().getUrlPath();
-        } else {
-            throw new GradleException("WARDEPLOY deployment type not available for Web Apps on Containers deployments");
-        }
-//        task.getWebApp().update().withAppSetting("SCM_TARGET_PATH", "webapps/" + (urlPath == null ? "" : urlPath)).apply();
-        task.getLogger().quiet("War name is: " + target);
-        urlPath = urlPath == null ? "" : urlPath;
+        String contextPath = task.getAzureWebAppExtension().getDeployment().getContextPath();
+        task.getLogger().quiet("War name is: " + warFile);
         int retryCount = 0;
         task.getLogger().quiet("Starting to deploy the war file...");
         while (retryCount++ < DEFAULT_MAX_RETRY_TIMES) {
             try {
-                task.getWebApp().warDeploy(targetFile, urlPath);
+                task.getWebApp().warDeploy(targetFile, contextPath);
                 return;
             } catch (Exception e) {
                 task.getLogger().quiet(String.format(UPLOAD_FAILURE, retryCount, DEFAULT_MAX_RETRY_TIMES));

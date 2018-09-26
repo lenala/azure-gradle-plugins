@@ -9,6 +9,7 @@ package com.microsoft.azure.gradle.webapp.auth;
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.ApplicationTokenCredentials;
 import com.microsoft.azure.credentials.AzureCliCredentials;
+import com.microsoft.azure.gradle.webapp.configuration.Authentication;
 import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.Azure.Authenticated;
 import com.microsoft.rest.LogLevel;
@@ -21,29 +22,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+import static com.microsoft.azure.gradle.webapp.helpers.CommonStringTemplates.PROPERTY_MISSING_TEMPLATE;
+
 /**
- * Helper class to authenticate with Azure
+ * Helper class to authenticate with Azure.
  */
 public class AzureAuthHelper {
-    public static final String CLIENT_ID = "client";
-    private static final String TENANT_ID = "tenant";
-    private static final String KEY = "key";
-    private static final String CERTIFICATE = "certificate";
-    private static final String CERTIFICATE_PASSWORD = "certificatePassword";
-    private static final String ENVIRONMENT = "environment";
-
     private static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
     private static final String AUTH_WITH_FILE = "Authenticate with file: ";
     private static final String AUTH_WITH_AZURE_CLI = "Authenticate with Azure CLI 2.0";
     private static final String USE_KEY_TO_AUTH = "Use key to get Azure authentication token: ";
     private static final String USE_CERTIFICATE_TO_AUTH = "Use certificate to get Azure authentication token.";
-
-    private static final String CLIENT_ID_NOT_CONFIG = "Client Id of your service principal is not configured.";
-    private static final String TENANT_ID_NOT_CONFIG = "Tenant Id of your service principal is not configured.";
-    private static final String KEY_NOT_CONFIG = "Key of your service principal is not configured.";
-    private static final String CERTIFICATE_FILE_NOT_CONFIG = "Certificate of your service principal is not configured.";
     private static final String CERTIFICATE_FILE_READ_FAIL = "Failed to read certificate file: ";
-    private static final String AUTH_FILE_NOT_CONFIG = "Authentication file is not configured.";
     private static final String AUTH_FILE_NOT_EXIST = "Authentication file does not exist: ";
     private static final String AUTH_FILE_READ_FAIL = "Failed to read authentication file: ";
     private static final String AZURE_CLI_AUTH_FAIL = "Failed to authenticate with Azure CLI 2.0";
@@ -51,11 +41,6 @@ public class AzureAuthHelper {
     protected AuthConfiguration config;
     private Logger logger = Logging.getLogger(AzureAuthHelper.class);
 
-    /**
-     * Constructor
-     *
-     * @param config
-     */
     public AzureAuthHelper(final AuthConfiguration config) {
         if (config == null) {
             throw new NullPointerException();
@@ -110,17 +95,25 @@ public class AzureAuthHelper {
 
     protected Authenticated getAuthObj() {
         Authenticated auth;
-        // check if project has Azure authentication settings in build.gradle or gradle.properties or in environment variables
-        boolean hasAuthSetting = config.hasAuthenticationSettings();
-        if (hasAuthSetting) {
-            auth = getAuthObjFromConfiguration(config);
-            if (auth == null) {
-                auth = getAuthObjFromFile(config.getAuthFile());
-            }
+        // check if project has Azure authentication settings in build.gradle
+        // or gradle.properties or in environment variables
+        final Authentication authSetting = config.getAuthenticationSettings();
+        switch (authSetting.getType()) {
+            case FILE:
+                if (authSetting.getFile() != null) {
+                    return getAuthObjFromFile(new File(authSetting.getFile()));
         } else {
-            auth = getAuthObjFromAzureCli();
+                    logger.quiet("Failed to get authentication file, please make sure it is specified.");
+                    return null;
         }
-        return auth;
+            case PROPERTIES:
+                return getAuthObjFromConfiguration(authSetting);
+            case AZURECLI:
+                return getAuthObjFromAzureCli();
+            default:
+                logger.error("Unrecognized authentication type.");
+                return null;
+        }
     }
 
     /**
@@ -128,15 +121,16 @@ public class AzureAuthHelper {
      *
      * @return Authenticated object if configurations are correct; otherwise return null.
      */
-    private Authenticated getAuthObjFromConfiguration(final AuthConfiguration config) {
-        final ApplicationTokenCredentials credential = getAppTokenCredentials();
+    private Authenticated getAuthObjFromConfiguration(final Authentication authSetting) {
+        final ApplicationTokenCredentials credential = getAppTokenCredentials(authSetting);
         if (credential == null) {
+            logger.quiet("Authentication info for Azure is not valid.");
             return null;
         }
 
         final Authenticated auth = azureConfigure().authenticate(credential);
         if (auth != null) {
-            logger.quiet(AUTH_WITH_CLIENT_ID + config.getAuthenticationSetting(CLIENT_ID));
+            logger.quiet(AUTH_WITH_CLIENT_ID + authSetting.getClient());
         }
         return auth;
     }
@@ -149,7 +143,7 @@ public class AzureAuthHelper {
      */
     private Authenticated getAuthObjFromFile(final File authFile) {
         if (authFile == null) {
-            logger.debug(AUTH_FILE_NOT_CONFIG);
+            logger.debug(String.format(PROPERTY_MISSING_TEMPLATE, "authentication.file"));
             return null;
         }
 
@@ -193,38 +187,38 @@ public class AzureAuthHelper {
      *
      * @return ApplicationTokenCredentials object if configuration is correct; otherwise return null.
      */
-    private ApplicationTokenCredentials getAppTokenCredentials() {
-        final String clientId = config.getAuthenticationSetting(CLIENT_ID);
+    private ApplicationTokenCredentials getAppTokenCredentials(Authentication authSetting) {
+        final String clientId = authSetting.getClient();
         if (StringUtils.isEmpty(clientId)) {
-            logger.quiet(CLIENT_ID_NOT_CONFIG);
+            logger.quiet(String.format(PROPERTY_MISSING_TEMPLATE, "authentication.client"));
             return null;
         }
 
-        final String tenantId = config.getAuthenticationSetting(TENANT_ID);
+        final String tenantId = authSetting.getTenant();
         if (StringUtils.isEmpty(tenantId)) {
-            logger.quiet(TENANT_ID_NOT_CONFIG);
+            logger.quiet(String.format(PROPERTY_MISSING_TEMPLATE, "authentication.tenant"));
             return null;
         }
 
-        final String environment = config.getAuthenticationSetting(ENVIRONMENT);
+        final String environment = authSetting.getEnvironment();
         final AzureEnvironment azureEnvironment = getAzureEnvironment(environment);
         logger.quiet("Azure Management Endpoint: " + azureEnvironment.managementEndpoint());
 
-        final String key = config.getAuthenticationSetting(KEY);
+        final String key = authSetting.getKey();
         if (!StringUtils.isEmpty(key)) {
             logger.quiet(USE_KEY_TO_AUTH);
             return new ApplicationTokenCredentials(clientId, tenantId, key, azureEnvironment);
         } else {
-            logger.quiet(KEY_NOT_CONFIG);
+            logger.quiet(String.format(PROPERTY_MISSING_TEMPLATE, "authentication.key"));
         }
 
-        final String certificate = config.getAuthenticationSetting(CERTIFICATE);
+        final String certificate = authSetting.getCertificate();
         if (StringUtils.isEmpty(certificate)) {
-            logger.quiet(CERTIFICATE_FILE_NOT_CONFIG);
+            logger.quiet(String.format(PROPERTY_MISSING_TEMPLATE, "authentication.certificate"));
             return null;
         }
 
-        final String certificatePassword = config.getAuthenticationSetting(CERTIFICATE_PASSWORD);
+        final String certificatePassword = authSetting.getCertificatePassword();
         try {
             byte[] cert;
             cert = Files.readAllBytes(Paths.get(certificate, new String[0]));

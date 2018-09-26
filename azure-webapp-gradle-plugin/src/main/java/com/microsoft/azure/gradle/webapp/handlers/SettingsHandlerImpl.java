@@ -11,8 +11,6 @@ import com.microsoft.azure.management.appservice.WebApp.Update;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 
-import java.util.Map;
-
 public class SettingsHandlerImpl implements SettingsHandler {
     private Project project;
 

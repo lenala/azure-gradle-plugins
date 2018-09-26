@@ -8,15 +8,24 @@ package com.microsoft.azure.gradle.webapp;
 import com.microsoft.azure.gradle.webapp.auth.AuthConfiguration;
 import com.microsoft.azure.gradle.webapp.auth.AzureAuthFailureException;
 import com.microsoft.azure.gradle.webapp.auth.AzureAuthHelper;
+import com.microsoft.azure.gradle.webapp.configuration.Authentication;
+import com.microsoft.azure.gradle.webapp.configuration.DeployTarget;
+import com.microsoft.azure.gradle.webapp.configuration.DeploymentSlotDeployTarget;
+import com.microsoft.azure.gradle.webapp.configuration.WebAppDeployTarget;
 import com.microsoft.azure.gradle.webapp.handlers.HandlerFactory;
 import com.microsoft.azure.gradle.webapp.handlers.RuntimeHandler;
 import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.appservice.DeploymentSlot;
 import com.microsoft.azure.management.appservice.WebApp;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
-import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class DeployTask extends DefaultTask implements AuthConfiguration {
     public static final String TASK_NAME = "azureWebappDeploy";
@@ -33,9 +42,14 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     private static final String START_APP = "Starting Web App after deploying artifacts...";
     private static final String STOP_APP_DONE = "Successfully stopped Web App.";
     private static final String START_APP_DONE = "Successfully started Web App.";
+    private static final String SLOT_SHOULD_EXIST_NOW = "Target deployment slot still does not exist." +
+            "Please check if any error message during creation";
+
+    private static final String SUBSCRIPTION_ID_KEY = "com.microsoft.azure.subscriptionId";
 
     private Azure azure;
     private AzureWebAppExtension azureWebAppExtension;
+    private WebApp app;
     private AzureAuthHelper azureAuthHelper;
     private DeploymentUtil util = new DeploymentUtil();
 
@@ -104,33 +118,47 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     }
 
     private void deployArtifacts() throws Exception {
-        //getResources();
-        /*if (resources == null || resources.isEmpty()) {
-            getLog().info(NO_RESOURCES_CONFIG);
-        } else */
-        // Deployment to container services, nothing to upload
-        if (azureWebAppExtension.getContainerSettings() != null) {
-            getLogger().quiet("Deployment completed");
-        } else {
             try {
                 getLogger().quiet("Deploying artifacts");
                 util.beforeDeployArtifacts();
-                getFactory().getArtifactHandler(this).publish();
+
+                DeployTarget target;
+
+                if (azureWebAppExtension.getDeployment().getDeploymentSlot() != null) {
+                    final String slotName = azureWebAppExtension.getDeployment().getDeploymentSlot();
+                    final DeploymentSlot slot = getDeploymentSlot(app, slotName);
+                    if (slot == null) {
+                        throw new GradleException(SLOT_SHOULD_EXIST_NOW);
+                    }
+                    target = new DeploymentSlotDeployTarget(slot);
+                } else {
+                    target = new WebAppDeployTarget(getWebApp());
+                }
+
+                if (getFactory().getArtifactHandler(this) != null) {
+                getFactory().getArtifactHandler(this).publish(target);
+            }
             } finally {
                 util.afterDeployArtifacts();
             }
         }
+
+    private DeploymentSlot getDeploymentSlot(final WebApp app, final String slotName) {
+        DeploymentSlot slot = null;
+        if (StringUtils.isNotEmpty(slotName)) {
+            try {
+                slot = app.deploymentSlots().getByName(slotName);
+            } catch (NoSuchElementException deploymentSlotNotExistException) {
+            }
+        }
+        return slot;
     }
 
     public Azure getAzureClient() throws AzureAuthFailureException {
         if (azure == null) {
             azure = azureAuthHelper.getAzureClient();
             if (azure == null) {
-//                getTelemetryProxy().trackEvent(INIT_FAILURE);
                 throw new AzureAuthFailureException(AZURE_INIT_FAIL);
-            } else {
-                // Repopulate subscriptionId in case it is not configured.
-//                getTelemetryProxy().addDefaultProperty(SUBSCRIPTION_ID_KEY, azure.subscriptionId());
             }
         }
         return azure;
@@ -143,36 +171,30 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
 
     @Override
     public String getSubscriptionId() {
-        return (String) getProject().getProperties().get("subscriptionId");
+        return (String) getProject().getProperties().get(SUBSCRIPTION_ID_KEY);
     }
 
     // todo
     @Override
     public String getUserAgent() {
         return getName() + " " + getGroup();
-//        return String.format("%s/%s %s:%s %s:%s", this.getName(), this.getGroup()
-//                getPluginName(), getPluginVersion(),
-//                INSTALLATION_ID_KEY, getInstallationId(),
-//                SESSION_ID_KEY, getSessionId());
     }
 
     @Override
-    public boolean hasAuthenticationSettings() {
-        return getProject().getProperties().containsKey(AzureAuthHelper.CLIENT_ID) || azureWebAppExtension.getAuthFile() != null
-                || System.getenv(AzureAuthHelper.CLIENT_ID) != null;
-    }
-
-    @Override
-    public String getAuthenticationSetting(String key) {
-        if (getProject().getProperties().get(key) != null) {
-            return (String) getProject().getProperties().get(key);
+    public Authentication getAuthenticationSettings() {
+        Authentication authSetting = azureWebAppExtension.getAuthentication();
+        Map<String, ?> props = getProject().getProperties();
+        for (Field f : authSetting.getClass().getDeclaredFields()) {
+            try {
+                String key = String.format("com.microsoft.azure.auth.%s", f.getName());
+                if (null == f.get(authSetting) && props.containsKey(key)) {
+                    f.set(authSetting, props.get(key));
         }
-        return System.getenv(key);
+            } catch (IllegalAccessException e) {
+                // ignore
     }
-
-    @Override
-    public File getAuthFile() {
-        return azureWebAppExtension.getAuthFile();
+        }
+        return authSetting;
     }
 
     class DeploymentUtil {

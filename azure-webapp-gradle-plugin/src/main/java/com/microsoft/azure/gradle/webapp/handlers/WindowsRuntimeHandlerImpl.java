@@ -15,11 +15,11 @@ import com.microsoft.azure.management.appservice.WebApp;
 import com.microsoft.azure.management.appservice.WebApp.DefinitionStages.WithCreate;
 import com.microsoft.azure.management.appservice.WebApp.Update;
 
-public class JavaRuntimeHandlerImpl implements RuntimeHandler {
+public class WindowsRuntimeHandlerImpl implements RuntimeHandler {
     private DeployTask task;
     private AzureWebAppExtension extension;
 
-    public JavaRuntimeHandlerImpl(final DeployTask task) {
+    public WindowsRuntimeHandlerImpl(final DeployTask task) {
         this.task = task;
         this.extension = task.getAzureWebAppExtension();
     }
@@ -29,8 +29,8 @@ public class JavaRuntimeHandlerImpl implements RuntimeHandler {
         final AppServicePlan plan = WebAppUtils.createOrGetAppServicePlan(task, OperatingSystem.WINDOWS);
         final WithCreate withCreate = WebAppUtils.defineWindowsApp(task, plan);
 
-        withCreate.withJavaVersion(extension.getAppServiceOnWindows().getJavaVersion())
-                .withWebContainer(extension.getAppServiceOnWindows().getJavaWebContainer());
+        withCreate.withJavaVersion(extension.getAppService().getJavaVersion())
+                .withWebContainer(extension.getAppService().getJavaWebContainer());
         return withCreate;
     }
 
@@ -39,8 +39,8 @@ public class JavaRuntimeHandlerImpl implements RuntimeHandler {
         WebAppUtils.assureWindowsWebApp(app);
 
         final Update update = app.update();
-        update.withJavaVersion(extension.getAppServiceOnWindows().getJavaVersion())
-                .withWebContainer(extension.getAppServiceOnWindows().getJavaWebContainer());
+        update.withJavaVersion(extension.getAppService().getJavaVersion())
+                .withWebContainer(extension.getAppService().getJavaWebContainer());
         return update;
     }
 }

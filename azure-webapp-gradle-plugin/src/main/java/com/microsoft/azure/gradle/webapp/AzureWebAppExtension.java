@@ -5,77 +5,40 @@
  */
 package com.microsoft.azure.gradle.webapp;
 
-import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnLinux;
-import com.microsoft.azure.gradle.webapp.configuration.AppServiceOnWindows;
-import com.microsoft.azure.gradle.webapp.configuration.ContainerSettings;
-import com.microsoft.azure.gradle.webapp.configuration.DeploymentType;
+import com.microsoft.azure.gradle.webapp.configuration.AppService;
+import com.microsoft.azure.gradle.webapp.configuration.Authentication;
+import com.microsoft.azure.gradle.webapp.configuration.Deployment;
 import com.microsoft.azure.gradle.webapp.model.PricingTierEnum;
 import com.microsoft.azure.management.appservice.PricingTier;
 import groovy.lang.Closure;
 import org.gradle.api.Project;
-import org.gradle.api.tasks.Input;
-
-import java.io.File;
 
 public class AzureWebAppExtension {
-    public static final String WEBAPP_EXTENSION_NAME = "azurewebapp";
+    public static final String WEBAPP_EXTENSION_NAME = "azureWebApp";
     private final Project project;
-    @Input
+    private String subscriptionId = "";
     private String appName;
-    @Input
     private String resourceGroup;
-    @Input
     private String region = "westus2";
-    @Input
     private String appServicePlanResourceGroup;
-    @Input
     private String appServicePlanName;
-    @Input
     private PricingTierEnum pricingTier;
-    @Input
-    private String target;
-    @Input
     private boolean stopAppDuringDeployment;
-    @Input
-    private File authFile;
-    @Input
-    private DeploymentType deploymentType = DeploymentType.WARDEPLOY;
-
-    private AppServiceOnLinux appServiceOnLinux;
-
-    private AppServiceOnWindows appServiceOnWindows;
-
-    private ContainerSettings containerSettings;
+    private AppService appService;
+    private Authentication authentication;
+    private Deployment deployment;
 
     public AzureWebAppExtension(Project project) {
         this.project = project;
     }
 
-    public void setContainerSettings(Closure closure) {
-        containerSettings = new ContainerSettings();
-        project.configure(containerSettings, closure);
+    public AppService getAppService() {
+        return appService;
     }
 
-    public void setAppServiceOnWindows(Closure closure) {
-        appServiceOnWindows = new AppServiceOnWindows();
-        project.configure(appServiceOnWindows, closure);
-    }
-
-    public void setAppServiceOnLinux(Closure closure) {
-        appServiceOnLinux = new AppServiceOnLinux();
-        project.configure(appServiceOnLinux, closure);
-    }
-
-    public ContainerSettings getContainerSettings() {
-        return containerSettings;
-    }
-
-    public AppServiceOnLinux getAppServiceOnLinux() {
-        return appServiceOnLinux;
-    }
-
-    public AppServiceOnWindows getAppServiceOnWindows() {
-        return appServiceOnWindows;
+    public void setAppService(Closure closure) {
+        appService = new AppService();
+        project.configure(appService, closure);
     }
 
     public String getAppName() {
@@ -94,20 +57,8 @@ public class AzureWebAppExtension {
         return pricingTier == null ? PricingTier.STANDARD_S1 : pricingTier.toPricingTier();
     }
 
-    public String getTarget() {
-        return target;
-    }
-
     public boolean isStopAppDuringDeployment() {
         return stopAppDuringDeployment;
-    }
-
-    public File getAuthFile() {
-        return authFile;
-    }
-
-    public DeploymentType getDeploymentType() {
-        return deploymentType;
     }
 
     public String getAppServicePlanResourceGroup() {
@@ -116,5 +67,27 @@ public class AzureWebAppExtension {
 
     public String getAppServicePlanName() {
         return appServicePlanName;
+    }
+
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    public Authentication getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Closure closure) {
+        authentication = new Authentication();
+        project.configure(authentication, closure);
+    }
+
+    public Deployment getDeployment() {
+        return deployment;
+    }
+
+    public void setDeployment(Closure closure) {
+        deployment = new Deployment();
+        project.configure(deployment, closure);
     }
 }

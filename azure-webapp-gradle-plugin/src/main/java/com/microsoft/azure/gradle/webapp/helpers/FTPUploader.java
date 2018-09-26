@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 
 /**
- * Utility class to upload directory to FTP server
+ * Utility class to upload directory to FTP server.
  */
 public class FTPUploader {
     public static final String UPLOAD_START = "Starting uploading files to FTP server: ";
