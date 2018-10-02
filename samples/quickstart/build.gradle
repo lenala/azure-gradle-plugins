@@ -30,31 +30,25 @@ gretty {
 }
 
 // Azure Web App on Linux
-//azurewebapp {
-////    deploymentType = 'wardeploy'
-//    resourceGroup = "rg1"
-//    appName = "webapplena7"
-//    pricingTier = "S2"
-//    authFile = file('C:/stuff/my.azureauth')
-//    target = 'C:\\stuff\\azure-gradle-plugins.4\\samples\\quickstart\\build\\libs\\quickstart.war'
-//    appServiceOnLinux = {
-//        runtimeStack = 'TOMCAT 9.0-jre8'
-//        urlPath = 'quickstart'
-//    }
-//}
-
-// Azure Web App on Windows
-azurewebapp {
-    deploymentType = 'wardeploy'
-    resourceGroup = "rg1"
-    appName = "webapplena13"
-    pricingTier = "S2"
-    authFile = file('C:/stuff/my.azureauth')
+azureWebApp {
+    resourceGroup = 'resourceGroup1'
+    appName = 'appName1'
+    pricingTier = 'S1'
     region = 'southcentralus'
-    target = 'C:\\stuff\\azure-gradle-plugins.4\\samples\\quickstart\\build\\libs\\quickstart.war'
-    appServiceOnWindows = {
-        javaWebContainer = "tomcat 8.5"
-        javaVersion = "1.8.0_102"
-        urlPath = 'quickstart'
+
+    appService = {
+        type = 'linux'
+        runtimeStack = 'TOMCAT 8.5-jre8'
+    }
+
+    authentication = {
+        type = "file"
+        file = "<path_to_auth_file>"
+    }
+
+    deployment = {
+        type = "war"
+//        warFile = "${projectDir}/build/libs/quickstart.war"
+        contextPath = 'quickstart'
     }
 }

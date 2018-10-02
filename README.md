@@ -63,42 +63,74 @@ gradlew.bat azureWebappDeploy
 
 ## Common settings
 
-Name | Required | Value
----|---|---
-deploymentType | false | Deployment type - one of {FTP, WARDEPLOY}. Optional, default value is WARDEPLOY.
-resourceGroup | true | Azure resource group to create Web App
-appName | true | Web App name
-region | false | Azure region. Optional, default is WEST_US2
-appServicePlanResourceGroup | false | Specifies the resource group of the existing App Service Plan when you do not want to create a new one. If this setting is not specified, plugin will use the value defined in <code>resourceGroup</code>
-appServicePlanName | false | Specifies the name of the existing App Service Plan when you do not want to create a new one.
-pricingTier | false | 	Specifies the pricing tier for your Web App; the default value is S1.
-authFile | false | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication-settings)
+|Name | Required | Value |
+|---|---|---|
+|resourceGroup | true | Azure resource group to create Web App
+|appName | true | Web App name
+|region | false | Azure region. Optional, default is WEST_US2
+|appServicePlanResourceGroup | false | Specifies the resource group of the existing App Service Plan when you do not want to create a new one. If this setting is not specified, plugin will use the value defined in <code>resourceGroup</code>
+|appServicePlanName | false | Specifies the name of the existing App Service Plan when you do not want to create a new one.
+|stopAppDuringDeployment | false | Specifies whether to stop Web App during deployment. Optional, default is false
+| __appService__ | true | Block that specifies AppService settings
+| type | true | Type of the AppService, one of {'linux','windows','docker'}
+| runtimeStack ||
+| javaWebContainer | false | One of WebContainer values, default is TOMCAT_8_5_NEWEST
+| javaVersion | |
+| imageName |
+| startUpFile |
+| serverId |
+| username |
+| password |
+| registryUrl |
+| pricingTier | false | 	Specifies the pricing tier for your Web App; the default value is S1.
+| __authentication__ | true | Bloack that specifies authentication with Azure
+| type | | Authentication type, one of {FILE,PROPERTIES,AZURECLI}
+|authFile | false | File with authentication information. Optional, see [Azure Authentication settings](#azure-authentication-settings)
+| client | |
+| tenant | |
+| key | |
+| certificate | |
+| certificatePassword;
+| __deployment__ | true | Specifies deployment type and configuration
+deploymentType | false | Deployment type - one of {FTP, WAR, ZIP}. Optional, default value is WAR.
 target | false | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
-stopAppDuringDeployment | false | Specifies whether to stop Web App during deployment. Optional, default is false
+contextPath | | Url path
+
 
 # 4 types of deployment are supported:
 
 ## Web App on Windows
 
-`appServiceOnWindows` block should be specified, with the values:
+`appService` block should be specified, with the values:
 
 Name | Value
 ---|---
+type | 'windows'
 javaVersion | Java version. Supported versions are: {1.7, 1.7.0_51, 1.7.0_71, 1.8, 1.8.0_25, 1.8.0_60, 1.8.0_73, 1.8.0_111, 1.8.0_92, 1.8.0_102, 1.8.0_144}
 javaWebContainer | Web Container. Optional, default is newest Tomcat 8.5.
-urlPath | Url path. Optional, if not specified Web App will be deployed to root. Works for WARDEPLOY deployment type only.
-
-TOMCAT_8_5_NEWEST
 ```
-azurewebapp {
-    resourceGroup = <resource_group>
-    appName = <appName>
+azureWebApp {
+    resourceGroup = "${System.env.WEBAPP_RESOURCE_GROUP}"
+    appName = "${System.env.WEBAPP_NAME}"
     pricingTier = "S2"
-    target = <path_to_war_file>
-    appServiceOnWindows = {
+    region = "southcentralus"
+
+    appService = {
+        type = 'windows'
         javaWebContainer = "tomcat 8.5"
         javaVersion = "1.8.0_102"
-        urlPath = <url_path>
+    }
+
+    authentication = {
+        type = "file"
+        file = "<path_to_auth_file>"
+    }
+
+    deployment = {
+        type = "war"
+        // if 'warFile' is not specified, default output of the 'war' plugin will be used
+        // warFile = '<path_to_war_file>'
+        contextPath = 'todoapp'    // Url path. Optional, if not specified Web App will be deployed to root. Works for WAR deployment type only.
     }
 }
 ```
@@ -106,7 +138,7 @@ azurewebapp {
 
 ## Web App on Linux
 
-`appServiceOnLinux` block should be specified, with the values:
+`appService` block should contain the values:
 
 Name | Value
 ---|---
@@ -114,15 +146,23 @@ runtimeStack | Base image name. Right now possible values are: {'TOMCAT 9.0-jre8
 urlPath | Url path. Optional, if not specified Web App will be deployed to root. Works for WARDEPLOY deployment type only.
 
 ```
-azurewebapp {
-    deploymentType = 'wardeploy'
+azureWebApp {
     resourceGroup = <resource_group>
     appName = <appName>
     pricingTier = "S2"
-    target = <path_to_war_file>
-    appServiceOnLinux = {
+    appService = {
+        type = 'linux'
         runtimeStack = 'TOMCAT 9.0-jre8'
-        urlPath = <url_path>
+    }
+    authentication = {
+        type = "file"
+        file = "<path_to_auth_file>"
+    }
+    deployment = {
+        type = "war"
+        // if 'warFile' is not specified, default output of the 'war' plugin will be used
+        // warFile = '<path_to_war_file>'
+        contextPath = 'todoapp'
     }
 }
 ```
