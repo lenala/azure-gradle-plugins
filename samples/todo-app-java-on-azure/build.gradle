@@ -77,18 +77,29 @@ docker {
     }
 }
 
-// Deploy from container registry
-azurewebapp {
-    resourceGroup = "rg5"
-    appName = "mynewwebapplena18"
-    pricingTier = "S2"
-    authFile = file("C:/stuff/my2.azureauth")
-    containerSettings = {
+azureWebApp {
+    resourceGroup = 'resourceGroup12'
+    appName = 'appName12'
+    pricingTier = 'S1'
+    region = 'southcentralus'
+
+    appService = {
+        type = 'docker'
         imageName = dockerImage
+        runtimeStack = "tomcat 8.5-jre8"
         serverId = project.property('serverId')
+        registryUrl = "https://" + serverId
         username = project.property('serverUsername')
         password = project.property('serverPassword')
-        registryUrl = "https://" + serverId
+    }
+
+    authentication = {
+        type = "file"
+        file = "C:/stuff/my2.azureauth"
+    }
+
+    deployment = {
+        type = "ftp"
     }
 }
 
