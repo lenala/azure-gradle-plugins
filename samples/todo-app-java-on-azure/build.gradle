@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion     = "1.5.2.RELEASE"
+        springBootVersion     = "2.0.2.RELEASE"
         gradleDockerVersion   = "1.2"
     }
     repositories {
@@ -27,11 +27,14 @@ apply plugin: 'com.microsoft.azure.azurewebapp'
 import com.bmuschko.gradle.docker.tasks.image.*
 
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.8.RELEASE'
+    compile group: 'commons-io', name: 'commons-io', version: '1.4'
+    compile group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'2.0.2.RELEASE'
+    compile group: 'com.microsoft.azure', name: 'spring-data-documentdb', version: '2.0.2'
     compile group: 'com.microsoft.azure', name: 'azure-documentdb-spring-boot-starter', version:'0.2.0'
 }
 
-version = 'v0.15'
+version = 'v0.18'
 def projectArtifactId = "myimage"
 def dockerImage = serverId + "/" + projectArtifactId + ":" + version
 
