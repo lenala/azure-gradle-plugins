@@ -92,7 +92,7 @@ gradlew.bat azureWebappDeploy
 | certificate | |
 | certificatePassword;
 | __deployment__ | true | Specifies deployment type and configuration
-deploymentType | false | Deployment type - one of {FTP, WAR, ZIP}. Optional, default value is WAR.
+deploymentType | false | Deployment type - one of {FTP, WAR, ZIP, NONE}. Optional, default value is WAR.
 target | false | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
 contextPath | | Url path
 
@@ -175,16 +175,25 @@ azureWebApp {
 ### Deployment from Private Container Registry (Azure Container Registry)
 
 ```
-azurewebapp {
     resourceGroup = <resource_group>
     appName = <appName>
     pricingTier = "S1"
-    containerSettings = {
-        imageName = <image_name>
-        serverId = <server_id>
-        username = <registry_username>
-        password = <registry_password>
+    appService = {
+        type = 'docker'
+        imageName = dockerImage
+        serverId = project.property('serverId')
         registryUrl = "https://" + serverId
+        username = project.property('serverUsername')
+        password = project.property('serverPassword')
+    }
+
+    authentication = {
+        type = "file"
+        file = "C:/stuff/my2.azureauth"
+    }
+
+    deployment = {
+        type = "none"
     }
 }
 ```

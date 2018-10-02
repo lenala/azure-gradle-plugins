@@ -136,8 +136,8 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
                 }
 
                 if (getFactory().getArtifactHandler(this) != null) {
-                getFactory().getArtifactHandler(this).publish(target);
-            }
+                    getFactory().getArtifactHandler(this).publish(target);
+                }
             } finally {
                 util.afterDeployArtifacts();
             }

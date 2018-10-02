@@ -62,13 +62,16 @@ public class HandlerFactoryImpl extends HandlerFactory {
     @Override
     public ArtifactHandler getArtifactHandler(final DeployTask task) throws GradleException {
         Deployment deployment = task.getAzureWebAppExtension().getDeployment();
-        if (deployment == null) {
+        if (deployment == null && !AppServiceType.DOCKER.equals(task.getAzureWebAppExtension().getAppService().getType())) {
             task.getLogger().quiet("No deployment configured, exit.");
             return null;
         }
         switch (deployment.getType()) {
             case NONE:
-                throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "deployment.type"));
+                if (task.getAzureWebAppExtension().getAppService().getType() != AppServiceType.DOCKER) {
+                    throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "deployment.type"));
+                }
+                return null;
             case UNKNOWN:
                 throw new GradleException(String.format(UNKNOWN_VALUE_TEMPLATE, "deployment.type"));
             case WAR:

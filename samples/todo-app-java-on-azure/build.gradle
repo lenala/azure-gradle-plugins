@@ -89,7 +89,6 @@ azureWebApp {
     appService = {
         type = 'docker'
         imageName = dockerImage
-        runtimeStack = "tomcat 8.5-jre8"
         serverId = project.property('serverId')
         registryUrl = "https://" + serverId
         username = project.property('serverUsername')
@@ -102,7 +101,7 @@ azureWebApp {
     }
 
     deployment = {
-        type = "ftp"
+        type = "none"
     }
 }
 
