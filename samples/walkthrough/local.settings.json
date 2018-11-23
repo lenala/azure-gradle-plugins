@@ -1,7 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=elenafunctions;AccountKey=MuP7hNwp5eA3lTKrbcwuLKPievXV84xaIALKRkpQEDqYYszIPwYfz8UT2KARWropxCGZu4Ynbs5+JYc+r/cPSw==;EndpointSuffix=core.windows.net",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=<account_name>;AccountKey=<account_key>;EndpointSuffix=core.windows.net",
     "AzureWebJobsDashboard": ""
   }
 }
