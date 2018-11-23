@@ -5,9 +5,7 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven {
-            url uri('C:/Users/elenla.REDMOND/.m2/repository')
-        }
+        mavenLocal()
     }
     dependencies {
         classpath("com.microsoft.azure.functions:azure-functions-java-library:1.0.0-beta-4")
@@ -37,7 +35,7 @@ tasks.withType(JavaCompile) {
 }
 
 azurefunctions {
-    authFile = 'C:/stuff/my3.azureauth'
+    authFile = "${System.getProperty('user.home')}/stuff/my3.azureauth"
 }
 
 task azureFunctionsPackage(type: PackageTask) {
