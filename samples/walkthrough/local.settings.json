@@ -1,7 +1,6 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=elenafunctions;AccountKey=MuP7hNwp5eA3lTKrbcwuLKPievXV84xaIALKRkpQEDqYYszIPwYfz8UT2KARWropxCGZu4Ynbs5+JYc+r/cPSw==;EndpointSuffix=core.windows.net",
-    "AzureWebJobsDashboard": ""
+    "FUNCTIONS_WORKER_RUNTIME": "java","AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=elenafunctions;AccountKey=XXXXXXXX;EndpointSuffix=core.windows.net", "AzureWebJobsDashboard": ""
   }
 }

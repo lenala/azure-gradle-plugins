@@ -27,7 +27,7 @@ dependencies {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: uri('../../Users/elenla.REDMOND/.m2/repository'))
+            repository(url: uri("${System.getProperty('user.home')}/.m2/repository"))
         }
     }
 }
