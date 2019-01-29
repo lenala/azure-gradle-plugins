@@ -76,6 +76,10 @@ public class WebAppUtils {
             throws Exception {
         assureWindowsPlan(plan);
 
+        if (task.getAzureWebAppExtension().getAppName() == null) {
+            throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "azureWebapp.appName"));
+        }
+
         final String resourceGroup = task.getAzureWebAppExtension().getResourceGroup();
         final WebApp.DefinitionStages.ExistingWindowsPlanWithGroup existingWindowsPlanWithGroup =  task.getAzureClient().webApps()
                 .define(task.getAzureWebAppExtension().getAppName())
