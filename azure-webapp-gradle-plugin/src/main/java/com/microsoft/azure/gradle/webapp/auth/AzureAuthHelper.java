@@ -14,6 +14,7 @@ import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.Azure.Authenticated;
 import com.microsoft.rest.LogLevel;
 import org.apache.commons.lang3.StringUtils;
+import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 
@@ -98,6 +99,9 @@ public class AzureAuthHelper {
         // check if project has Azure authentication settings in build.gradle
         // or gradle.properties or in environment variables
         final Authentication authSetting = config.getAuthenticationSettings();
+        if (authSetting.getType() == null) {
+            throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "authentication.type"));
+        }
         switch (authSetting.getType()) {
             case FILE:
                 if (authSetting.getFile() != null) {

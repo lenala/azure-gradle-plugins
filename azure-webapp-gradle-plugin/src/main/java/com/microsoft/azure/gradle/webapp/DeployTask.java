@@ -27,6 +27,8 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import static com.microsoft.azure.gradle.webapp.helpers.CommonStringTemplates.PROPERTY_MISSING_TEMPLATE;
+
 public class DeployTask extends DefaultTask implements AuthConfiguration {
     public static final String TASK_NAME = "azureWebappDeploy";
 
@@ -124,6 +126,10 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
 
                 DeployTarget target;
 
+                if (azureWebAppExtension.getDeployment() == null) {
+                    throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "deployment"));
+                }
+
                 if (azureWebAppExtension.getDeployment().getDeploymentSlot() != null) {
                     final String slotName = azureWebAppExtension.getDeployment().getDeploymentSlot();
                     final DeploymentSlot slot = getDeploymentSlot(app, slotName);
@@ -183,6 +189,9 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
     @Override
     public Authentication getAuthenticationSettings() {
         Authentication authSetting = azureWebAppExtension.getAuthentication();
+        if (authSetting == null) {
+            throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "authentication"));
+        }
         Map<String, ?> props = getProject().getProperties();
         for (Field f : authSetting.getClass().getDeclaredFields()) {
             try {

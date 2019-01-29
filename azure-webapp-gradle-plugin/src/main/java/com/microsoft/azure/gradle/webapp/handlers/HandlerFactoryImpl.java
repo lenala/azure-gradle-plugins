@@ -66,6 +66,9 @@ public class HandlerFactoryImpl extends HandlerFactory {
             task.getLogger().quiet("No deployment configured, exit.");
             return null;
         }
+        if (deployment.getType() == null) {
+            throw new GradleException(String.format(PROPERTY_MISSING_TEMPLATE, "deployment.type"));
+        }
         switch (deployment.getType()) {
             case NONE:
                 if (task.getAzureWebAppExtension().getAppService().getType() != AppServiceType.DOCKER) {
