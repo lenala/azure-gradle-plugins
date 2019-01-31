@@ -25,10 +25,10 @@ In `azure-webapp-gradle-plugin` folder in `build.gradle` update reference to loc
 
 ```cmd
 # Windows
-gradlew.bat install
+gradlew.bat publishToMavenLocal
 
 # Linux/macOS
-./gradlew install
+./gradlew publishToMavenLocal
 ```
 
 ## Running sample ToDo app
