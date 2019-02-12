@@ -23,8 +23,8 @@
  */
 
 plugins {
-    id 'com.gradle.plugin-publish' version '0.10.0' apply false
     id 'com.gradle.build-scan'     version '2.1'
+    id 'com.gradle.plugin-publish' version '0.10.0' apply false
 }
 
 buildScan {
