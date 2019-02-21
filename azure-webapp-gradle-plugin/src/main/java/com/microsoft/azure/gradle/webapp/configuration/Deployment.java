@@ -15,6 +15,7 @@ import java.util.List;
 public class Deployment {
     private DeploymentType type;
     private String warFile;
+    private String jarFile;
     private String contextPath;
     private String deploymentSlot;
     private List<FTPResource> resources = new ArrayList<FTPResource>();
@@ -25,6 +26,10 @@ public class Deployment {
 
     public String getWarFile() {
         return this.warFile;
+    }
+
+    public String getJarFile() {
+        return jarFile;
     }
 
     public String getDeploymentSlot() {

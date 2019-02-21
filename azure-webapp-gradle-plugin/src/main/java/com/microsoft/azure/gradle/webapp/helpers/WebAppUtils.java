@@ -158,6 +158,10 @@ public class WebAppUtils {
                 return RuntimeStack.TOMCAT_8_5_JRE8;
             } else if (runtimeStack.equalsIgnoreCase(RuntimeStack.TOMCAT_9_0_JRE8.toString())) {
                 return RuntimeStack.TOMCAT_9_0_JRE8;
+            } else if (runtimeStack.equalsIgnoreCase(RuntimeStack.WILDFLY_14_JRE8.toString())) {
+                return RuntimeStack.WILDFLY_14_JRE8;
+            } else if (runtimeStack.equalsIgnoreCase("jre8")) {
+                return RuntimeStack.JAVA_8_JRE8;
             } else {
                 throw new GradleException(String.format(UNKNOWN_VALUE_TEMPLATE, "appService.runtimeStack"));
             }

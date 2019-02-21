@@ -18,6 +18,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public abstract class ArtifactHandlerBase implements ArtifactHandler {
+    protected static final String DEPLOY_START = "Trying to deploy artifact to %s...";
+    protected static final String DEPLOY_FINISH = "Successfully deployed the artifact to https://%s";
+
     protected DeployTask task;
 
     protected ArtifactHandlerBase(@Nonnull final DeployTask task) {
