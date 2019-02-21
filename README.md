@@ -139,7 +139,6 @@ azureWebApp {
     }
 }
 ```
-[Usage example](./samples/todo-app-java-on-azure.appservice-on-linux)
 
 ### Deploy JAR
 `appService` block should be specified, with the values:
@@ -168,6 +167,7 @@ azureWebApp {
     }
 }
 ```
+[Sample ToDo app](./samples/todo-app-java-on-azure.jar)
 
 ## Web App on Linux
 
