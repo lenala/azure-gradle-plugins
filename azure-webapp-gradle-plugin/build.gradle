@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.microsoft.azure:azure:1.15.1'
+    compile 'com.microsoft.azure:azure:1.17.1'
     compile 'commons-net:commons-net:3.6'
     compile 'commons-io:commons-io:2.2'
     compile 'org.zeroturnaround:zt-zip:1.13'

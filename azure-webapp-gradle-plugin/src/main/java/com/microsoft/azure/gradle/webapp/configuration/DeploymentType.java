@@ -11,5 +11,6 @@ public enum DeploymentType {
     FTP,
     WAR,
     ZIP,
+    JAR,
     UNKNOWN;
 }

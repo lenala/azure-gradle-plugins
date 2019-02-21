@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ZipArtifactHandlerImpl extends ArtifactHandlerBase {
+    private static final int DEFAULT_MAX_RETRY_TIMES = 3;
 
     public ZipArtifactHandlerImpl(final DeployTask task) {
         super(task);
@@ -24,6 +25,24 @@ public class ZipArtifactHandlerImpl extends ArtifactHandlerBase {
         prepareResources();
         assureStagingDirectoryNotEmpty();
 
+        File zipFile = getZipFile();
+        task.getLogger().info(String.format(DEPLOY_START, target.getName()));
+
+        // Add retry logic here to avoid Kudu's socket timeout issue.
+        // More details: https://github.com/Microsoft/azure-maven-plugins/issues/339
+        int retryCount = 0;
+        while (retryCount < DEFAULT_MAX_RETRY_TIMES) {
+            retryCount += 1;
+            try {
+                target.zipDeploy(zipFile);
+                task.getLogger().quiet(String.format(DEPLOY_FINISH, target.getDefaultHostName()));
+                return;
+            } catch (Exception e) {
+                task.getLogger().quiet(
+                        String.format("Exception occurred when deploying the zip package: %s, " +
+                                              "retrying immediately (%d/%d)", e.getMessage(), retryCount, DEFAULT_MAX_RETRY_TIMES));
+            }
+        }
         target.zipDeploy(getZipFile());
     }
 
