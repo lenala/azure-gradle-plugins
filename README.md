@@ -7,6 +7,8 @@
   - [Running sample ToDo app](#running-sample-todo-app)
   - [Common settings](#common-settings)
   - [Web App on Windows](#web-app-on-windows)
+    - [Deploy WAR](#deploy-war)
+    - [Deploy JAR](#deploy-jar)
   - [Web App on Linux](#web-app-on-linux)
   - [Web Apps on Containers](#web-apps-on-containers)
     - [Deployment from Private Container Registry (Azure Container Registry)](#deployment-from-private-container-registry-azure-container-registry)
@@ -73,15 +75,15 @@ gradlew.bat azureWebappDeploy
 |stopAppDuringDeployment | false | Specifies whether to stop Web App during deployment. Optional, default is false
 | __appService__ | true | Block that specifies AppService settings
 | type | true | Type of the AppService, one of {'linux','windows','docker'}
-| runtimeStack ||
+| runtimeStack | false | Supported are {'TOMCAT 8.5-jre8', 'TOMCAT 9.0-jre8', 'WILDFLY" 14-jre8', 'jre8'}
 | javaWebContainer | false | One of WebContainer values, default is TOMCAT_8_5_NEWEST
-| javaVersion | |
-| imageName |
-| startUpFile |
-| serverId |
-| username |
-| password |
-| registryUrl |
+| javaVersion | false | For App Service on Windows, supported versions are: {1.7, 1.7.0_51, 1.7.0_71, 1.8, 1.8.0_25, 1.8.0_60, 1.8.0_73, 1.8.0_111, 1.8.0_92, 1.8.0_102, 1.8.0_144}
+| imageName | false |
+| startUpFile | false |
+| serverId | false |
+| username | false |
+| password | false |
+| registryUrl | false |
 | pricingTier | false | 	Specifies the pricing tier for your Web App; the default value is S1.
 | __authentication__ | true | Bloack that specifies authentication with Azure
 | type | | Authentication type, one of {FILE,PROPERTIES,AZURECLI}
@@ -92,14 +94,17 @@ gradlew.bat azureWebappDeploy
 | certificate | |
 | certificatePassword;
 | __deployment__ | true | Specifies deployment type and configuration
-deploymentType | false | Deployment type - one of {FTP, WAR, ZIP, NONE}. Optional, default value is WAR.
-target | false | Target artifact to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
-contextPath | | Url path
+deploymentType | false | Deployment type - one of {FTP, WAR, JAR, ZIP, NONE}. Optional, default value is WAR.
+warFile | false | Target war file to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
+jarFile | false | Target jar file to deploy. Not used for Web Apps for containers. Optional, if not specified, default jar file output produced by 'bootJar' plugin will be used.
+contextPath | false | Url path
 
 
-# 4 types of deployment are supported:
+# These types of deployment are supported:
 
 ## Web App on Windows
+
+### Deploy WAR
 
 `appService` block should be specified, with the values:
 
@@ -134,7 +139,35 @@ azureWebApp {
     }
 }
 ```
-[Usage example](./samples/todo-app-java-on-azure.appservice-on-linux)
+
+### Deploy JAR
+`appService` block should be specified, with the values:
+
+Name | Value
+---|---
+type | 'windows'
+javaVersion | Java version. Supported versions are: {1.7, 1.7.0_51, 1.7.0_71, 1.8, 1.8.0_25, 1.8.0_60, 1.8.0_73, 1.8.0_111, 1.8.0_92, 1.8.0_102, 1.8.0_144}
+```
+azureWebApp {
+    resourceGroup = "${System.env.WEBAPP_RESOURCE_GROUP}"
+    appName = "${System.env.WEBAPP_NAME}"
+    pricingTier = "S1"
+    appService = {
+        type = 'windows'
+        javaVersion = '1.8.0_25'
+    }
+    authentication = {
+        type = "file"
+        file = file('C:/stuff/2days.azureauth')
+    }
+    deployment = {
+        type = "jar"
+        // optional, if not provided, bootJar task output is used
+        // jarFile = file('<path_to_jar_file>')
+    }
+}
+```
+[Sample ToDo app](./samples/todo-app-java-on-azure.jar)
 
 ## Web App on Linux
 

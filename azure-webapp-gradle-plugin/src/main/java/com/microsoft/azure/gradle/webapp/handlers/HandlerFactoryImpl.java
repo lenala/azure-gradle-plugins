@@ -81,6 +81,8 @@ public class HandlerFactoryImpl extends HandlerFactory {
                 return new WarArtifactHandlerImpl(task);
             case ZIP:
                 return new ZipArtifactHandlerImpl(task);
+            case JAR:
+                return new JarArtifactHandlerImpl(task);
             case FTP:
             default:
                 return new FTPArtifactHandlerImpl(task);
