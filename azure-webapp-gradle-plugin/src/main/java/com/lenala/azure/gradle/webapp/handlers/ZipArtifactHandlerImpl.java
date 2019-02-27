@@ -24,7 +24,6 @@ public class ZipArtifactHandlerImpl extends ArtifactHandlerBase {
         task.getLogger().info(String.format(DEPLOY_START, target.getName()));
 
         // Add retry logic here to avoid Kudu's socket timeout issue.
-        // More details: https://github.com/Microsoft/azure-maven-plugins/issues/339
         int retryCount = 0;
         while (retryCount < DEFAULT_MAX_RETRY_TIMES) {
             retryCount += 1;
