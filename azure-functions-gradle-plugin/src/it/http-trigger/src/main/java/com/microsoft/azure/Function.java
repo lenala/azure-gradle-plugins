@@ -1,14 +1,8 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for
- * license information.
- */
-
-package com.microsoft.azure;
+package com.lenala.azure;
 
 import java.util.*;
-import com.microsoft.azure.functions.annotation.*;
-import com.microsoft.azure.functions.*;
+import com.lenala.azure.functions.annotation.*;
+import com.lenala.azure.functions.*;
 
 /**
  * Azure Functions with HTTP Trigger.

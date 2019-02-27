@@ -8,13 +8,13 @@ buildscript {
     }
     dependencies {
         classpath 'org.akhikhl.gretty:gretty:1.4.2'
-        classpath group: 'com.microsoft.azure', name: 'azure-webapp-gradle-plugin',
+        classpath group: 'com.lenala.azure', name: 'azure-webapp-gradle-plugin',
                 version: '1.0-SNAPSHOT'
     }
 }
 apply plugin: 'org.akhikhl.gretty'
 apply plugin: 'war'
-apply plugin: 'com.microsoft.azure.azurewebapp'
+apply plugin: 'com.lenala.azure.azurewebapp'
 
 repositories {
     jcenter()

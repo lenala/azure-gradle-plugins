@@ -1,5 +1,5 @@
 plugins {
-    id "com.microsoft.azure.azurewebapp"
+    id "com.lenala.azure.azurewebapp"
 }
 
 azurewebapp {

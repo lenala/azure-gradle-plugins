@@ -1,8 +1,3 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for
- * license information.
- */
 
 // Verify Azure Functions
 def url = "https://maven-functions-it-${timestamp}-1.azurewebsites.net/api/hello?name=Azure".toURL()

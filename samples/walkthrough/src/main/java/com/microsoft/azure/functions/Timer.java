@@ -1,7 +1,7 @@
-package com.microsoft.azure.functions;
+package com.lenala.azure.functions;
 
-import com.microsoft.azure.functions.ExecutionContext;
-import com.microsoft.azure.functions.annotation.*;
+import com.lenala.azure.functions.ExecutionContext;
+import com.lenala.azure.functions.annotation.*;
 
 public class Timer {
     @FunctionName("Timer")
