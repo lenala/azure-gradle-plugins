@@ -7,8 +7,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'com.lenala.azure', name: 'azure-webapp-gradle-plugin',
-                version: '1.0-SNAPSHOT'
+        classpath group: 'lenala.azure', name: 'azure-webapp-gradle-plugin',
+                version: '1.0'
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE'
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.0.2.RELEASE"
     }
@@ -17,7 +17,7 @@ buildscript {
 apply plugin: 'war'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: "org.springframework.boot"
-apply plugin: 'com.lenala.azure.azurewebapp'
+apply plugin: 'lenala.azure.azurewebapp'
 
 repositories {
     jcenter()
@@ -37,8 +37,8 @@ bootJar {
 }
 
 azureWebApp {
-    resourceGroup = "${System.env.WEBAPP_RESOURCE_GROUP}"
-    appName = "${System.env.WEBAPP_NAME}"
+    resourceGroup = "lenattest1windows3"
+    appName = "webapp123642"
     pricingTier = "S1"
     appService = {
         type = 'windows'

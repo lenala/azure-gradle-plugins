@@ -1,5 +1,5 @@
 plugins {
-    id "com.lenala.azure.azurewebapp"
+    id "lenala.azure.azurewebapp"
 }
 def registryId = System.env.SERVER_ID
 

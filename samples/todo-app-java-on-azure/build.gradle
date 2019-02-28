@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath group: 'com.lenala.azure', name: 'azure-webapp-gradle-plugin',
+        classpath group: 'lenala.azure', name: 'azure-webapp-gradle-plugin',
                 version: '1.0-SNAPSHOT'
         classpath 'com.bmuschko:gradle-docker-plugin:3.2.1'
     }
@@ -22,7 +22,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: "org.springframework.boot"
 apply plugin: 'com.bmuschko.docker-remote-api'
-apply plugin: 'com.lenala.azure.azurewebapp'
+apply plugin: 'lenala.azure.azurewebapp'
 
 import com.bmuschko.gradle.docker.tasks.image.*
 
@@ -46,7 +46,7 @@ tasks.withType(JavaCompile) {
 
 jar {
     baseName = "todo-app-java-on-azure"
-    manifest { attributes "Main-Class": "com.lenala.azure.sample.TodoApplication" }
+    manifest { attributes "Main-Class": "lenala.azure.sample.TodoApplication" }
 }
 
 task createDockerfile(type: Dockerfile) {
