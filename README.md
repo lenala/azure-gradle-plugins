@@ -1,9 +1,8 @@
 [![Build Status](https://travis-ci.org/lenala/azure-gradle-plugins.svg?style=flat-square&label=build&branch=master)](https://travis-ci.org/lenala/azure-gradle-plugins)
 # azure-gradle-plugins
 
-
+- [Compiling plugins locally](#compiling-plugins)
 - [Azure WebApp plugin](#azure-webapp-plugin)
-  - [Compiling plugin](#compiling-plugin)
   - [Running sample ToDo app](#running-sample-todo-app)
   - [Common settings](#common-settings)
   - [Web App on Windows](#web-app-on-windows)
@@ -20,8 +19,7 @@
     - [Tasks](#tasks)
     - [Running sample Azure Functions app](#running-sample-azure-functions-app)
 - [Azure Authentication settings](#azure-authentication-settings)  
-
-## Compiling plugin
+## Compiling plugins locally
 
 In `azure-webapp-gradle-plugin` folder in `build.gradle` update reference to local maven repo. Then run
 
@@ -33,34 +31,12 @@ gradlew.bat publishToMavenLocal
 ./gradlew publishToMavenLocal
 ```
 
-## Running sample ToDo app
+# Azure WebApp plugin
 
-In `samples/todo-app-on-azure` folder, update reference to local maven repo, appName and Azure Container Registry url and credentials. Follow [this tutorial](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal) to get started with Azure Container Registry.
-
-In `gradle.properties`, set your container registry `serverId`, `serverUsername`, and `serverPassword`.
-
-To push the Docker image, you'll need Docker running, then execute the `dockerPushImage` task:
-
-```cmd
-# Windows
-gradlew.bat dockerPushImage
-
-# Linux/macOS
-./gradlew dockerPushImage
 ```
-
-Create a new CosmosDB instance and set your CosmosDB credentials in `src/main/resources/application.properties`.
-
-Configure `azurewebapp` in `build.gradle` with valid values for `resourceGroup`, `appName`, `pricingTier`, and `authFile` (see the section on [Azure Authentication settings](#azure-authentication-settings)).
-
-Then deploy the ToDo web application to a Azure Container instance, you must specify  the `azureWebappDeploy` task:
-
-```cmd
-# Windows
-gradlew.bat azureWebappDeploy
-
-# Linux/macOS
-./gradlew azureWebappDeploy
+plugins {
+  id "lenala.azure.azurewebapp" version "1.0"
+}
 ```
 
 ## Common settings
@@ -203,6 +179,34 @@ azureWebApp {
 
 ## Web Apps on Containers
 
+In `samples/todo-app-on-azure` folder, update reference to local maven repo, appName and Azure Container Registry url and credentials. Follow [this tutorial](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal) to get started with Azure Container Registry.
+
+In `gradle.properties`, set your container registry `serverId`, `serverUsername`, and `serverPassword`.
+
+To push the Docker image, you'll need Docker running, then execute the `dockerPushImage` task:
+
+```cmd
+# Windows
+gradlew.bat dockerPushImage
+
+# Linux/macOS
+./gradlew dockerPushImage
+```
+
+Create a new CosmosDB instance and set your CosmosDB credentials in `src/main/resources/application.properties`.
+
+Configure `azurewebapp` in `build.gradle` with valid values for `resourceGroup`, `appName`, `pricingTier`, and `authFile` (see the section on [Azure Authentication settings](#azure-authentication-settings)).
+
+Then deploy the ToDo web application to a Azure Container instance, you must specify  the `azureWebappDeploy` task:
+
+```cmd
+# Windows
+gradlew.bat azureWebappDeploy
+
+# Linux/macOS
+./gradlew azureWebappDeploy
+```
+
 `containerSettings` block should be specified.
 
 ### Deployment from Private Container Registry (Azure Container Registry)
@@ -236,7 +240,12 @@ azureWebApp {
 
 ### Deployment from private Docker Hub
 
-## Azure Functions plugin
+# Azure Functions plugin
+```
+plugins {
+  id "lenala.azure.azurefunctions" version "1.0"
+}
+```
 
 ### Prerequisites
 
