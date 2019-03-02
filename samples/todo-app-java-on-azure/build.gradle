@@ -13,9 +13,13 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath group: 'lenala.azure', name: 'azure-webapp-gradle-plugin',
-                version: '1.0-SNAPSHOT'
+                version: '1.0'
         classpath 'com.bmuschko:gradle-docker-plugin:3.2.1'
     }
+}
+
+plugins {
+    id "lenala.azure.azurewebapp" version "1.0"
 }
 
 apply plugin: 'java'

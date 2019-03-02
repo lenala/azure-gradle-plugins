@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.lenala.azure.sample;
+package com.microsoft.azure.sample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

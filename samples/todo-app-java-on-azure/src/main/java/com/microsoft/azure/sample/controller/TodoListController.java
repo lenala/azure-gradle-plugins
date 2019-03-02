@@ -3,10 +3,10 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.lenala.azure.sample.controller;
+package com.microsoft.azure.sample.controller;
 
-import com.lenala.azure.sample.dao.TodoItemRepository;
-import com.lenala.azure.sample.model.TodoItem;
+import com.microsoft.azure.sample.dao.TodoItemRepository;
+import com.microsoft.azure.sample.model.TodoItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
