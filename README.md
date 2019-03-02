@@ -21,7 +21,7 @@
 - [Azure Authentication settings](#azure-authentication-settings)  
 ## Compiling plugins locally
 
-In `azure-webapp-gradle-plugin` folder in `build.gradle` update reference to local maven repo. Then run
+In `build.gradle` update reference to local maven repo. Then run
 
 ```cmd
 # Windows
