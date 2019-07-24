@@ -57,4 +57,45 @@ public class AppService {
     public String getRegistryUrl() {
         return this.registryUrl;
     }
+
+    public void setType(AppServiceType type) {
+        this.type = type;
+    }
+
+    public void setRuntimeStack(String runtimeStack) {
+        this.runtimeStack = runtimeStack;
+    }
+
+    public void setJavaWebContainer(String javaWebContainer) {
+        this.javaWebContainer = javaWebContainer;
+    }
+
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public void setStartUpFile(String startUpFile) {
+        this.startUpFile = startUpFile;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRegistryUrl(String registryUrl) {
+        this.registryUrl = registryUrl;
+    }
+
 }

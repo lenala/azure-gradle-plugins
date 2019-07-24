@@ -130,4 +130,8 @@ public class AzureWebAppExtension {
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
     }
+
+    public void setDeployment(Deployment deployment) {
+        this.deployment = deployment;
+    }
 }
