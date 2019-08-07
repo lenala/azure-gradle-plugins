@@ -1,12 +1,11 @@
 package lenala.azure.gradle.webapp;
 
+import com.microsoft.azure.management.appservice.PricingTier;
+import groovy.lang.Closure;
 import lenala.azure.gradle.webapp.configuration.AppService;
 import lenala.azure.gradle.webapp.configuration.Authentication;
 import lenala.azure.gradle.webapp.configuration.Deployment;
-import lenala.azure.gradle.webapp.configuration.DeploymentSlotDeployTarget;
 import lenala.azure.gradle.webapp.model.PricingTierEnum;
-import com.microsoft.azure.management.appservice.PricingTier;
-import groovy.lang.Closure;
 import org.gradle.api.Project;
 
 public class AzureWebAppExtension {
