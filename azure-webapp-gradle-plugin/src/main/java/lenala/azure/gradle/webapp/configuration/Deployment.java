@@ -47,4 +47,28 @@ public class Deployment {
     public String getContextPath() {
         return StringUtils.isEmpty(this.contextPath) ? "" : this.contextPath;
     }
+
+    public void setType(DeploymentType type) {
+        this.type = type;
+    }
+
+    public void setWarFile(String warFile) {
+        this.warFile = warFile;
+    }
+
+    public void setJarFile(String jarFile) {
+        this.jarFile = jarFile;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
+    public void setDeploymentSlot(String deploymentSlot) {
+        this.deploymentSlot = deploymentSlot;
+    }
+
+    public void setFTPResources(List<FTPResource> resources) {
+        this.resources = resources;
+    }
 }

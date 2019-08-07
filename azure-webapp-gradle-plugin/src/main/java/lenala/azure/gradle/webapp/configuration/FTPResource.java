@@ -13,4 +13,12 @@ public class FTPResource {
     public String getTargetPath() {
         return StringUtils.isEmpty(targetPath) ? "" : targetPath;
     }
+
+    public void setSourcePath(String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
+    }
 }

@@ -42,4 +42,36 @@ public class Authentication {
     public String getCertificatePassword() {
         return certificatePassword;
     }
+
+    public void setType(AuthenticationType type) {
+        this.type = type;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setCertificate(String certificate) {
+        this.certificate = certificate;
+    }
+
+    public void setCertificatePassword(String certificatePassword) {
+        this.certificatePassword = certificatePassword;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
 }

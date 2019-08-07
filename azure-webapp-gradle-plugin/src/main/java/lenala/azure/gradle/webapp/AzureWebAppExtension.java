@@ -1,11 +1,11 @@
 package lenala.azure.gradle.webapp;
 
+import com.microsoft.azure.management.appservice.PricingTier;
+import groovy.lang.Closure;
 import lenala.azure.gradle.webapp.configuration.AppService;
 import lenala.azure.gradle.webapp.configuration.Authentication;
 import lenala.azure.gradle.webapp.configuration.Deployment;
 import lenala.azure.gradle.webapp.model.PricingTierEnum;
-import com.microsoft.azure.management.appservice.PricingTier;
-import groovy.lang.Closure;
 import org.gradle.api.Project;
 
 public class AzureWebAppExtension {
@@ -84,5 +84,53 @@ public class AzureWebAppExtension {
     public void setDeployment(Closure closure) {
         deployment = new Deployment();
         project.configure(deployment, closure);
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setResourceGroup(String resourceGroup) {
+        this.resourceGroup = resourceGroup;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setAppServicePlanResourceGroup(String appServicePlanResourceGroup) {
+        this.appServicePlanResourceGroup = appServicePlanResourceGroup;
+    }
+
+    public void setAppServicePlanName(String appServicePlanName) {
+        this.appServicePlanName = appServicePlanName;
+    }
+
+    public void setPricingTier(PricingTierEnum pricingTier) {
+        this.pricingTier = pricingTier;
+    }
+
+    public void setStopAppDuringDeployment(boolean stopAppDuringDeployment) {
+        this.stopAppDuringDeployment = stopAppDuringDeployment;
+    }
+
+    public void setAppService(AppService appService) {
+        this.appService = appService;
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+    }
+
+    public void setDeployment(Deployment deployment) {
+        this.deployment = deployment;
     }
 }

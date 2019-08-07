@@ -73,6 +73,7 @@ plugins {
 deploymentType | false | Deployment type - one of {FTP, WAR, JAR, ZIP, NONE}. Optional, default value is WAR.
 warFile | false | Target war file to deploy. Not used for Web Apps for containers. Optional, if not specified, default war file output produced by 'war' plugin will be used.
 jarFile | false | Target jar file to deploy. Not used for Web Apps for containers. Optional, if not specified, default jar file output produced by 'bootJar' plugin will be used.
+deploymentSlot | false | Deployment slot name to use. For springboot1337/deploy the name you should enter is "deploy"
 contextPath | false | Url path
 
 

@@ -19,6 +19,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -99,7 +100,7 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
         getLogger().quiet("Processing settings");
         getFactory().getSettingsHandler(getProject()).processSettings(withCreate);
         getLogger().quiet("Creating WebApp");
-        withCreate.create();
+        this.app = withCreate.create();
 
         getLogger().quiet(WEBAPP_CREATED);
     }
@@ -112,6 +113,7 @@ public class DeployTask extends DefaultTask implements AuthConfiguration {
         update.apply();
 
         getLogger().quiet(UPDATE_WEBAPP_DONE);
+        this.app = app;
     }
 
     private void deployArtifacts() throws Exception {
