@@ -135,7 +135,6 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
         if (azure == null) {
             azure = azureAuthHelper.getAzureClient();
             if (azure == null) {
-//                getTelemetryProxy().trackEvent(INIT_FAILURE);
                 throw new AzureAuthFailureException(AZURE_INIT_FAIL);
             } else {
                 // Repopulate subscriptionId in case it is not configured.

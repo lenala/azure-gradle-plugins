@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        functionsCoreVersion     = "1.0.0-beta-4"
+        functionsCoreVersion     = "1.3.1"
     }
     repositories {
         mavenCentral()
@@ -10,9 +10,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath("com.microsoft.azure.functions:azure-functions-java-library:1.0.0-beta-4")
+        classpath("com.microsoft.azure.functions:azure-functions-java-library:1.3.1")
         classpath group: 'lenala.azure', name: 'azure-functions-gradle-plugin',
-                version: '1.0-SNAPSHOT'
+                version: '1.0.1'
     }
 }
 
@@ -23,7 +23,7 @@ apply plugin: 'lenala.azure.azurefunctions'
 import lenala.azure.gradle.functions.*;
 
 dependencies {
-    compile 'com.microsoft.azure.functions:azure-functions-java-library:1.0.0-beta-4'
+    compile 'com.microsoft.azure.functions:azure-functions-java-library:1.3.1'
 }
 
 version = 'v0.15'

@@ -1,7 +1,7 @@
-package lenala.azure.functions;
+package com.microsoft.azure.functions;
 
-import lenala.azure.functions.ExecutionContext;
-import lenala.azure.functions.annotation.*;
+import com.microsoft.azure.functions.annotation.FunctionName;
+import com.microsoft.azure.functions.annotation.QueueTrigger;
 
 public class Queue {
     @FunctionName("Queue")

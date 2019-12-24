@@ -2,8 +2,7 @@ package lenala.azure.gradle.functions.configuration;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lenala.azure.gradle.functions.bindings.BaseBinding;
-import lenala.azure.gradle.functions.bindings.StorageBaseBinding;
+import lenala.azure.gradle.functions.bindings.Binding;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -25,9 +24,7 @@ public class FunctionConfiguration {
 
     private String entryPoint;
 
-    private List<BaseBinding> bindings = new ArrayList<>();
-
-    private boolean disabled = false;
+    private List<Binding> bindings = new ArrayList<>();
 
     @JsonGetter("scriptFile")
     public String getScriptFile() {
@@ -40,17 +37,8 @@ public class FunctionConfiguration {
     }
 
     @JsonGetter("bindings")
-    public List<BaseBinding> getBindings() {
+    public List<Binding> getBindings() {
         return bindings;
-    }
-
-    @JsonGetter("disabled")
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     public void setScriptFile(String scriptFile) {
@@ -86,9 +74,8 @@ public class FunctionConfiguration {
 
     protected void checkEmptyStorageConnection() {
         if (getBindings().stream()
-                .filter(b -> b instanceof StorageBaseBinding)
-                .map(b -> (StorageBaseBinding) b)
-                .filter(sb -> StringUtils.isEmpty(sb.getConnection())).count() > 0) {
+                .filter(binding -> binding.getBindingEnum().isStorage())
+                .anyMatch(binding -> StringUtils.isEmpty((String) binding.getAttribute("connection")))) {
             throw new RuntimeException(STORAGE_CONNECTION_EMPTY + getEntryPoint());
         }
     }

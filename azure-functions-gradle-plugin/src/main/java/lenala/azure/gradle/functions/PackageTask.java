@@ -13,8 +13,12 @@ import org.gradle.api.tasks.TaskExecutionException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,17 +81,20 @@ public class PackageTask extends FunctionsTask {
         Set<Method> functions;
         try {
             getLogger().quiet("ClassPath to resolve: " + getTargetClassUrl());
-            functions = handler.findFunctions(getTargetClassUrl());
+            final List<URL> dependencyWithTargetClass = getDependencyArtifactUrls();
+            dependencyWithTargetClass.add(getTargetClassUrl());
+            functions = handler.findFunctions(dependencyWithTargetClass);
         } catch (NoClassDefFoundError e) {
             // fallback to reflect through artifact url
             getLogger().quiet("ClassPath to resolve: " + getArtifactUrl());
-            functions = handler.findFunctions(getArtifactUrl());
+            functions = handler.findFunctions(Arrays.asList(getArtifactUrl()));
         }
         getLogger().quiet(functions.size() + FOUND_FUNCTIONS);
         return functions;
     }
 
     private URL getArtifactUrl() throws Exception {
+        // todo
         return null;
 //        return this.getProject().Artifact().getFile().toURI().toURL();
         //        return this.getProject().getArtifact().getFile().toURI().toURL();
@@ -95,6 +102,28 @@ public class PackageTask extends FunctionsTask {
 
     private URL getTargetClassUrl() throws Exception {
         return new File(getOutputDirectory()).toURI().toURL();
+    }
+
+    /**
+     * @return URLs for the classpath with compile scope needed jars
+     */
+    protected List<URL> getDependencyArtifactUrls() {
+        final List<URL> urlList = new ArrayList<>();
+        final List<String> compileClasspathElements = new ArrayList<>();
+        try {
+//            compileClasspathElements.addAll(this.getProject().getCompileClasspathElements());
+        } catch (Exception e) {
+            getLogger().quiet("Failed to resolve dependencies for compile scope, exception: " + e.getMessage());
+        }
+        for (final String element : compileClasspathElements) {
+            final File f = new File(element);
+            try {
+                urlList.add(f.toURI().toURL());
+            } catch (MalformedURLException e) {
+                getLogger().quiet("Failed to get URL for file: " + f.toString());
+            }
+        }
+        return urlList;
     }
 
     private Map<String, FunctionConfiguration> getFunctionConfigurations(final AnnotationHandler handler,
