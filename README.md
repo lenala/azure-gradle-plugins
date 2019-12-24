@@ -35,7 +35,7 @@ gradlew.bat publishToMavenLocal
 
 ```
 plugins {
-  id "lenala.azure.azurewebapp" version "1.0"
+  id "lenala.azure.azurewebapp" version "1.0.1"
 }
 ```
 
@@ -244,7 +244,7 @@ gradlew.bat azureWebappDeploy
 # Azure Functions plugin
 ```
 plugins {
-  id "lenala.azure.azurefunctions" version "1.0"
+  id "lenala.azure.azurefunctions" version "1.0.1"
 }
 ```
 
