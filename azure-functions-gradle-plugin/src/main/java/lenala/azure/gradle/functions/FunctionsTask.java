@@ -37,7 +37,7 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
      */
     private String region= "westus2";
 
-    private String outputDirectory;
+    String outputDirectory;
 
     private String finalName;
 
@@ -84,13 +84,6 @@ public abstract class FunctionsTask extends DefaultTask implements AuthConfigura
             appSettings.put("FUNCTIONS_EXTENSION_VERSION", "beta");
         }
         return appSettings;
-    }
-
-    public String getOutputDirectory() {
-        if (outputDirectory == null) {
-            outputDirectory = getProject().getTasks().getByPath("compileJava").getOutputs().getFiles().getAsPath();
-        }
-        return outputDirectory;
     }
 
     public void setOutputDirectory(String outputDirectory) {

@@ -18,10 +18,10 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 public class PackageTask extends FunctionsTask {
     private static final String SEARCH_FUNCTIONS = "Step 1 of 6: Searching for Azure Function entry points";
@@ -80,9 +80,8 @@ public class PackageTask extends FunctionsTask {
         getLogger().quiet(SEARCH_FUNCTIONS);
         Set<Method> functions;
         try {
-            getLogger().quiet("ClassPath to resolve: " + getTargetClassUrl());
             final List<URL> dependencyWithTargetClass = getDependencyArtifactUrls();
-            dependencyWithTargetClass.add(getTargetClassUrl());
+            dependencyWithTargetClass.addAll(getTargetClassUrls());
             functions = handler.findFunctions(dependencyWithTargetClass);
         } catch (NoClassDefFoundError e) {
             // fallback to reflect through artifact url
@@ -100,8 +99,19 @@ public class PackageTask extends FunctionsTask {
         //        return this.getProject().getArtifact().getFile().toURI().toURL();
     }
 
-    private URL getTargetClassUrl() throws Exception {
-        return new File(getOutputDirectory()).toURI().toURL();
+    private Set<URL> getTargetClassUrls() throws Exception {
+        Set<URL> targetClassUrls = new HashSet<>();
+        getProject().getTasks().getByPath("compileJava").getOutputs().getFiles().forEach(file -> {
+            try {
+                targetClassUrls.add(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                getLogger().quiet("Failed to parse URL: " + file);
+            }
+        });
+        if (outputDirectory != null) {
+            targetClassUrls.add(new File(outputDirectory).toURI().toURL());
+        }
+        return targetClassUrls;
     }
 
     /**
