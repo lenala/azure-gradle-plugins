@@ -156,6 +156,8 @@ public class WebAppUtils {
                 return RuntimeStack.WILDFLY_14_JRE8;
             } else if (runtimeStack.equalsIgnoreCase("jre8")) {
                 return RuntimeStack.JAVA_8_JRE8;
+            } else if (runtimeStack.equalsIgnoreCase("java11")) {
+                return RuntimeStack.JAVA_11_JAVA11;
             } else {
                 throw new GradleException(String.format(UNKNOWN_VALUE_TEMPLATE, "appService.runtimeStack"));
             }
