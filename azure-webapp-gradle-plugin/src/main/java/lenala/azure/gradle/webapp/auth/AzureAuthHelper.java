@@ -3,6 +3,7 @@ package lenala.azure.gradle.webapp.auth;
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.ApplicationTokenCredentials;
 import com.microsoft.azure.credentials.AzureCliCredentials;
+import com.microsoft.azure.credentials.MSICredentials;
 import lenala.azure.gradle.webapp.configuration.Authentication;
 import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.Azure.Authenticated;
@@ -26,6 +27,7 @@ public class AzureAuthHelper {
     private static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
     private static final String AUTH_WITH_FILE = "Authenticate with file: ";
     private static final String AUTH_WITH_AZURE_CLI = "Authenticate with Azure CLI 2.0";
+    private static final String AUTH_WITH_AZURE_MSI = "Authenticate with Azure CLI 2.0 via MSI";
     private static final String USE_KEY_TO_AUTH = "Use key to get Azure authentication token: ";
     private static final String USE_CERTIFICATE_TO_AUTH = "Use certificate to get Azure authentication token.";
     private static final String CERTIFICATE_FILE_READ_FAIL = "Failed to read certificate file: ";
@@ -169,9 +171,18 @@ public class AzureAuthHelper {
      */
     private Authenticated getAuthObjFromAzureCli() {
         try {
-            final Authenticated auth = azureConfigure().authenticate(AzureCliCredentials.create());
-            if (auth != null) {
-                logger.quiet(AUTH_WITH_AZURE_CLI);
+            final Azure.Configurable azureConfigurable = azureConfigure();
+            final Authenticated auth;
+            if (isInCloudShell()) {
+                auth = azureConfigurable.authenticate(new MSICredentials());
+                if (auth != null) {
+                    logger.quiet(AUTH_WITH_AZURE_MSI);
+                }                
+            } else {
+                auth = azureConfigurable.authenticate(AzureCliCredentials.create());
+                if (auth != null) {
+                    logger.quiet(AUTH_WITH_AZURE_CLI);
+                }
             }
             return auth;
         } catch (Exception e) {
