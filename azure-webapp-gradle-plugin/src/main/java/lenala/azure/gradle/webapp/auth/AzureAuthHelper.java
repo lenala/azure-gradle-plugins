@@ -238,4 +238,8 @@ public class AzureAuthHelper {
         }
         return null;
     }
+
+    private static boolean isInCloudShell() {
+        return System.getenv(CLOUD_SHELL_ENV_KEY) != null;
+    }
 }
