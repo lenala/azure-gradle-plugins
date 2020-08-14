@@ -26,6 +26,7 @@ public class AzureAuthHelper {
     private static final String CERTIFICATE = "certificate";
     private static final String CERTIFICATE_PASSWORD = "certificatePassword";
     private static final String ENVIRONMENT = "environment";
+    private static final String CLOUD_SHELL_ENV_KEY = "ACC_CLOUD";
 
     private static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
     private static final String AUTH_WITH_FILE = "Authenticate with file: ";

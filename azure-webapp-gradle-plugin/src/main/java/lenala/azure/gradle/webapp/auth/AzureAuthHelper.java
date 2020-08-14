@@ -24,6 +24,8 @@ import static lenala.azure.gradle.webapp.helpers.CommonStringTemplates.PROPERTY_
  * Helper class to authenticate with Azure.
  */
 public class AzureAuthHelper {
+    private static final String CLOUD_SHELL_ENV_KEY = "ACC_CLOUD";
+
     private static final String AUTH_WITH_CLIENT_ID = "Authenticate with clientId: ";
     private static final String AUTH_WITH_FILE = "Authenticate with file: ";
     private static final String AUTH_WITH_AZURE_CLI = "Authenticate with Azure CLI 2.0";
